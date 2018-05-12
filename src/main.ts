@@ -2,25 +2,41 @@ interface IParamsMap {
   [key: string]: any;
 }
 
+interface IDirectivesMap {
+  [key: string]: boolean;
+}
+
 interface IPreprocessorOption {
+  /**
+   * debug mode
+   */
+  debug: boolean;
+  /**
+   * Custom Directives
+   */
+  directives: IDirectivesMap;
+  /**
+   * values for buildin directives
+   */
   params: IParamsMap;
-  debug?: boolean;
-  raw?: boolean;
-  verbose?: boolean;
+  /**
+   * is keep all lines (deleted code as comment)
+   */
+  verbose: boolean;
 }
 
 const REGEX_DIRECTIVE = /\s*\/\/\s*#!(\w*)\s?\s*(.*)?/;
 
-const defaultOptions: IPreprocessorOption = {
-  // DEBUG模式
+const DEFAULT_OPTIONS: IPreprocessorOption = {
   debug: false,
-  // 预编译指令集
+  directives: {},
   params: {},
-  // 是否保留预编译信息
-  raw: false,
-  // 是否输出完整预编译信息
   verbose: false,
 };
+
+function getOptions(query: any): IPreprocessorOption {
+  return Object.assign({}, DEFAULT_OPTIONS, query);
+}
 
 /**
  * Get the result of the condition defined by "#!if" directive
@@ -43,35 +59,61 @@ function ifComparator(params: IParamsMap, rawCondition: string): boolean {
  */
 function preprocessor(content: string) {
   // @ts-ignore
-  const params = this.query.params;
+  const { debug, params, directives, verbose } = getOptions(this.query);
   const lines = content.split('\n');
 
-  let ifFlag = true;
+  let isKeep = true;
+  let scope: 'single' | 'multi' | 'skip' = 'single';
   return lines.reduce((result, line, index) => {
+    const eol = index !== lines.length - 1 ? '\n' : '';
+
     const matchGroup = REGEX_DIRECTIVE.exec(line);
     if (matchGroup !== null) {
       const [, directive, condition] = matchGroup;
 
       if (directive === 'if') {
-        ifFlag = ifComparator(params, condition);
+        isKeep = ifComparator(params, condition);
+        scope = isKeep ? 'skip' : 'multi';
+      } else if (directive === 'elseif') {
+        if (scope !== 'skip') {
+          isKeep = ifComparator(params, condition);
+          scope = isKeep ? 'skip' : 'multi';
+        } else {
+          isKeep = false;
+        }
       } else if (directive === 'else') {
-        ifFlag = !ifFlag;
+        if (scope !== 'skip') {
+          isKeep = !isKeep;
+          scope = isKeep ? 'skip' : 'multi';
+        } else {
+          isKeep = false;
+        }
       } else if (directive === 'endif') {
-        ifFlag = true;
+        isKeep = true;
+        scope = 'single';
+      } else if (directive === 'debug') {
+        isKeep = debug;
+        scope = 'single';
+      } else {
+        isKeep = !!directives[directive];
+        scope = 'single';
       }
 
-      return result;
+      return verbose ? result.concat(line + eol) : result;
     }
 
-    if (ifFlag) {
-      const eol = index !== lines.length - 1 ? '\n' : '';
+    if (isKeep) {
       return result.concat(line + eol);
     } else {
-      return result;
+      isKeep = scope === 'single';
+
+      return verbose ? result.concat(`/** ${line} */${eol}`) : result;
     }
   }, '');
 }
 
-module.exports.REGEX_DIRECTIVE = REGEX_DIRECTIVE;
-module.exports.ifComparator = ifComparator;
-module.exports.preprocessor = preprocessor;
+module.exports = {
+  REGEX_DIRECTIVE,
+  ifComparator,
+  preprocessor,
+};

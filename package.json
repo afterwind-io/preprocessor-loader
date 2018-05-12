@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "A code preprocessor for Webpack",
   "main": "index.js",
-  "repository": "git@github.com:afterwind-io/preprocessor-loader.git",
+  "repository": "https://github.com/afterwind-io/preprocessor-loader.git",
   "author": "AfterWind <spmushroom@hotmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=6.11.5"
+  },
+  "homepage": "https://github.com/afterwind-io/preprocessor-loader",
   "scripts": {
     "build": "tsc",
     "test": "mocha"
@@ -19,7 +23,6 @@
     "eslint": "^4.19.1",
     "mocha": "^5.1.1",
     "tslint": "^5.10.0",
-    "typescript": "^2.8.3",
-    "webpack": "^4.8.1"
+    "typescript": "^2.8.3"
   }
 }

@@ -5,10 +5,31 @@ const {
   ifComparator,
 } = require('../dist/main');
 const {
+  C_DEBUG,
+  R_DEBUG,
+  C_DEBUG_SINGLE,
+  R_DEBUG_SINGLE,
   C_IF_ENDIF,
   R_IF_ENDIF,
   C_IF_ELSE_ENDIF,
-  R_IF_ELSE_ENDIF,
+  R_IF_ELSE_ENDIF_1,
+  R_IF_ELSE_ENDIF_2,
+  C_IF_ELSEIF_ENDIF,
+  R_IF_ELSEIF_ENDIF_1,
+  R_IF_ELSEIF_ENDIF_2,
+  C_IF_ELSEIF_ELSE_ENDIF,
+  R_IF_ELSEIF_ELSE_ENDIF_1,
+  R_IF_ELSEIF_ELSE_ENDIF_2,
+  R_IF_ELSEIF_ELSE_ENDIF_3,
+  R_IF_ELSEIF_ELSE_ENDIF_4,
+  C_CUSTOM_DIRECTIVES,
+  R_CUSTOM_DIRECTIVES,
+  C_CUSTOM_DIRECTIVES_SINGLE,
+  R_CUSTOM_DIRECTIVES_SINGLE,
+  C_CUSTOM_DIRECTIVES_MULTI,
+  R_CUSTOM_DIRECTIVES_MULTI,
+  C_VERBOSE,
+  R_VERBOSE,
 } = require('./case');
 
 describe('Preprocessor-Loader Test', () => {
@@ -74,9 +95,17 @@ describe('Preprocessor-Loader Test', () => {
   });
 
   describe('Case Test - #!debug', () => {
-    it('Test Case - Standard');
+    const option = {
+      debug: false,
+    };
 
-    it('Test Case - Only the line exactly below "#!debug" should be processed');
+    it('Test Case - Standard', () => {
+      expect(p.call({ query: option }, C_DEBUG)).equals(R_DEBUG);
+    });
+
+    it('Test Case - Only the line exactly below "#!debug" should be processed', () => {
+      expect(p.call({ query: option }, C_DEBUG_SINGLE)).equals(R_DEBUG_SINGLE);
+    });
   });
 
   describe('Case Test - #!if | #!endif', () => {
@@ -94,25 +123,98 @@ describe('Preprocessor-Loader Test', () => {
   describe('Case Test - #!if | #!else | #!endif', () => {
     const option = {
       params: {
-        foo: 2,
+        foo: 1,
       },
     };
 
-    it('Test Case - Standard', () => {
-      expect(p.call({ query: option }, C_IF_ELSE_ENDIF)).equals(R_IF_ELSE_ENDIF);
+    it('Test Case - Standard - 1', () => {
+      expect(p.call({ query: option }, C_IF_ELSE_ENDIF)).equals(R_IF_ELSE_ENDIF_1);
+    });
+
+    it('Test Case - Standard - 2', () => {
+      option.params.foo = 2;
+      expect(p.call({ query: option }, C_IF_ELSE_ENDIF)).equals(R_IF_ELSE_ENDIF_2);
     });
   });
 
   describe('Case Test - #!if | #!elseif | #!endif', () => {
-    it('Test Case - Standard');
+    const option = {
+      params: {
+        foo: 1,
+        bar: 2,
+      },
+    };
+
+    it('Test Case - Standard - 1', () => {
+      expect(p.call({ query: option }, C_IF_ELSEIF_ENDIF)).equals(R_IF_ELSEIF_ENDIF_1);
+    });
+
+    it('Test Case - Standard - 2', () => {
+      option.params.foo = 2;
+      expect(p.call({ query: option }, C_IF_ELSEIF_ENDIF)).equals(R_IF_ELSEIF_ENDIF_2);
+    });
   });
 
   describe('Case Test - #!if | #!elseif | #!else | #!endif', () => {
-    it('Test Case - Standard');
+    const option = {
+      params: {
+        foo: 1,
+        bar: 1,
+      },
+    };
+
+    it('Test Case - Standard - 1', () => {
+      expect(p.call({ query: option }, C_IF_ELSEIF_ELSE_ENDIF)).equals(R_IF_ELSEIF_ELSE_ENDIF_1);
+    });
+
+    it('Test Case - Standard - 2', () => {
+      option.params.foo = 2;
+      expect(p.call({ query: option }, C_IF_ELSEIF_ELSE_ENDIF)).equals(R_IF_ELSEIF_ELSE_ENDIF_2);
+    });
+
+    it('Test Case - Standard - 3', () => {
+      option.params.bar = 2;
+      expect(p.call({ query: option }, C_IF_ELSEIF_ELSE_ENDIF)).equals(R_IF_ELSEIF_ELSE_ENDIF_3);
+    });
+
+    it('Test Case - Standard - 4', () => {
+      option.params.bar = 3;
+      expect(p.call({ query: option }, C_IF_ELSEIF_ELSE_ENDIF)).equals(R_IF_ELSEIF_ELSE_ENDIF_4);
+    });
   });
 
-  describe('Case Test - User Defined Directives', () => {
-    it('Test Case - Standard');
+  describe('Case Test - Custom Directives', () => {
+    const option = {
+      directives: {
+        doge: false,
+        kitty: true,
+      },
+    };
+
+    it('Test Case - Standard', () => {
+      expect(p.call({ query: option }, C_CUSTOM_DIRECTIVES)).equals(R_CUSTOM_DIRECTIVES);
+    });
+
+    it('Test Case - Only the line exactly below the directive should be processed', () => {
+      expect(p.call({ query: option }, C_CUSTOM_DIRECTIVES_SINGLE)).equals(R_CUSTOM_DIRECTIVES_SINGLE);
+    });
+
+    it('Test Case - Multiple Custom Directives', () => {
+      expect(p.call({ query: option }, C_CUSTOM_DIRECTIVES_MULTI)).equals(R_CUSTOM_DIRECTIVES_MULTI);
+    });
+  });
+
+  describe('Case Test - Options', () => {
+    it('Test Case - "verbose"', () => {
+      const option = {
+        params: {
+          foo: 2,
+        },
+        verbose: true,
+      };
+
+      expect(p.call({ query: option }, C_VERBOSE)).equals(R_VERBOSE);
+    });
   });
 
   describe('Edge Test', () => {
