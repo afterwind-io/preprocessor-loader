@@ -12,7 +12,8 @@
   "homepage": "https://github.com/afterwind-io/preprocessor-loader",
   "scripts": {
     "build": "tsc",
-    "test": "mocha"
+    "test": "mocha",
+    "prepublish": "yarn build"
   },
   "dependencies": {
     "chalk": "^2.4.1"
