@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsc",
     "test": "mocha",
-    "prepublish": "yarn build"
+    "prepare": "yarn build"
   },
   "dependencies": {
     "chalk": "^2.4.1"
