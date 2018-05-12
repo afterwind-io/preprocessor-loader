@@ -1,10 +1,10 @@
-# preprocessor-loader
+# webpack-preprocessor-loader
 
 Bring the awesome "Conditional Compilation" to the Webpack, and more.
 
 ## Why
 
-Make life easy with the power of `preprocessor-loader`:
+Make life easy with the power of `webpack-preprocessor-loader`:
 
 - Output different codes based on environment (eg: development/production);
 - Split codes in production, while bundle them in development;
@@ -52,18 +52,18 @@ Cons:
 ## Installation
 
 ``` bash
-yarn add preprocessor-loader -D
+yarn add webpack-preprocessor-loader -D
 ```
 
 or
 
 ``` bash
-npm install preprocessor-loader -D
+npm install webpack-preprocessor-loader -D
 ```
 
 ## Configuration
 
-Since it deals directly with the raw text, the `preprocessor-loader` should be the **last** loader in `use` definition:
+Since it deals directly with the raw text, the `webpack-preprocessor-loader` should be the **last** loader in `use` definition:
 
 ``` javascript
 module.exports = {
@@ -75,7 +75,7 @@ module.exports = {
         use: [
           'babel-loader',
           {
-            loader: 'preprocessor-loader'
+            loader: 'webpack-preprocessor-loader'
             options: {
               debug: process.env.NODE_ENV !== 'product',
               directives: {
@@ -118,7 +118,7 @@ Define custom directives. For example, to create a directive called "foo":
 // In webpack config...
 
 {
-  loader: 'preprocessor-loader'
+  loader: 'webpack-preprocessor-loader'
   options: {
     directives: {
       foo: false,
@@ -192,7 +192,7 @@ As name suggests, these directives work similarly like real `if` logic:
 // In webpack config...
 
 {
-  loader: 'preprocessor-loader'
+  loader: 'webpack-preprocessor-loader'
   options: {
     params: {
       foo: 2,
@@ -296,7 +296,7 @@ const foo = -1;
 
 It is hard to get around this problem while linting through editor plugin, because ESLint parses the file into AST first, which caused a parsing error. So the only solution is to temporarily comment one of the declarations out during code editing.
 
-Otherwise, if `eslint-loader` is used, simply put it **before** `preprocessor-loader`:
+Otherwise, if `eslint-loader` is used, simply put it **before** `webpack-preprocessor-loader`:
 
 ``` javascript
 module.exports = {
@@ -309,7 +309,7 @@ module.exports = {
           'babel-loader',
           'eslint-loader',
           {
-            loader: 'preprocessor-loader'
+            loader: 'webpack-preprocessor-loader'
             options: {
               // ...
             },
