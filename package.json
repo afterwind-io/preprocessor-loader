@@ -1,5 +1,5 @@
 {
-  "name": "preprocessor-loader",
+  "name": "webpack-preprocessor-loader",
   "version": "1.0.0",
   "description": "A code preprocessor for Webpack",
   "main": "index.js",
