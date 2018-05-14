@@ -1,5 +1,11 @@
 # webpack-preprocessor-loader
 
+[![Version][version-badge]][npm]
+[![Node][node-badge]][node]
+![Downloads][download-badge]
+[![License][license-badge]][license]
+[![Build Status][travis-badge]][travis]
+
 Bring the awesome "Conditional Compilation" to the Webpack, and more.
 
 ## Why
@@ -63,7 +69,7 @@ npm install webpack-preprocessor-loader -D
 
 ## Configuration
 
-Since it deals directly with the raw text, the `webpack-preprocessor-loader` should be the **last** loader in `use` definition:
+Since it deals directly with the raw text, `webpack-preprocessor-loader` should be the **last** loader in `use` definition:
 
 ``` javascript
 module.exports = {
@@ -75,7 +81,7 @@ module.exports = {
         use: [
           'babel-loader',
           {
-            loader: 'webpack-preprocessor-loader'
+            loader: 'webpack-preprocessor-loader',
             options: {
               debug: process.env.NODE_ENV !== 'product',
               directives: {
@@ -94,7 +100,7 @@ module.exports = {
 };
 ```
 
-Note that **any** text-based file can be complied, not only codes, but also html documents, styles, or even more.
+Note that **any** text-based file can be compiled, not only codes, but also html documents, styles, and more.
 
 ## Options
 
@@ -118,7 +124,7 @@ Define custom directives. For example, to create a directive called "foo":
 // In webpack config...
 
 {
-  loader: 'webpack-preprocessor-loader'
+  loader: 'webpack-preprocessor-loader',
   options: {
     directives: {
       foo: false,
@@ -131,7 +137,7 @@ In code:
 
 ``` javascript
 // #!foo
-console.log('wow') // This line will be omitted
+console.log('wow'); // This line will be omitted
 ```
 
 Note that the custom directive only marks its **next** line, which means:
@@ -139,10 +145,10 @@ Note that the custom directive only marks its **next** line, which means:
 ``` javascript
 // #!foo
 console.log('Removed'); // This line will be omitted
-console.log('Keeped'); // This line will not be affected by "#!foo", hence it will be kept anyway
+console.log('Kept'); // This line will not be affected by "#!foo", hence it will be kept anyway
 ```
 
-if an undefined directive is refrenced, say "bar", the next line marked by `#!bar` will always be omitted, because the value of `bar` is `undefined`, identical as `false`.
+If an undefined directive is referenced, say "bar", the next line marked by `#!bar` will always be omitted, because the value of `bar` is `undefined`, identical as `false`.
 
 ### `params`
 
@@ -158,7 +164,7 @@ Provide constant values for buildin `#!if` / `#!elseif` / `#!else` / `#!endif` d
 >
 > default: `false`
 
-Whether to keep raw info or not. Basically for debuging purpose.
+Whether to keep raw info or not. Basically for debugging purpose.
 
 ``` javascript
 // options.params.ENV === 'product'
@@ -170,7 +176,7 @@ console.log('much wow');
 // #!endif
 ```
 
-if set to `true`, yields:
+If set to `true`, yields:
 
 ``` javascript
 // #!if ENV === 'develop'
@@ -184,7 +190,7 @@ console.log('much wow');
 
 ### `#!if` / `#!else` / `#!elseif` / `#!endif`
 
-#### Basic usage
+#### Basic Usage
 
 As name suggests, these directives work similarly like real `if` logic:
 
@@ -192,7 +198,7 @@ As name suggests, these directives work similarly like real `if` logic:
 // In webpack config...
 
 {
-  loader: 'webpack-preprocessor-loader'
+  loader: 'webpack-preprocessor-loader',
   options: {
     params: {
       foo: 2,
@@ -241,7 +247,7 @@ Behind the scenes, the expression is wrapped in a `return` clause, and dynamical
 
 ### `#!debug`
 
-A semantic and handy directive to mark specific line only to be kept when needed, for example:
+A semantic and handy directive to mark specific line only to be kept when needed. For example:
 
 ``` javascript
 // options.debug === false
@@ -257,14 +263,14 @@ Note that the `#!debug` directive only marks its **next** line, which means:
 
 // #!debug
 console.log('Removed'); // This line will be omitted
-console.log('Keeped'); // This line will not be affected by "#!debug", hence it will be kept anyway
+console.log('Kept'); // This line will not be affected by "#!debug", hence it will be kept anyway
 ```
 
 ## Trivia (Maybe not)
 
 ### When combined with Typescript/ESlint
 
-the following code yields errors during compilation/linting:
+The following code yields errors during linting:
 
 ``` javascript
 // #!if ENV = 'develop'
@@ -279,13 +285,14 @@ const foo = -1;
 
 #### Typescript
 
-To suppress the error, a tricky way is simply adding `// @ts-ignore` before any of the declarations:
+To suppress the error, a tricky way is simply adding `// @ts-ignore` before all declarations:
 
 ``` javascript
 // #!if ENV = 'develop'
 // @ts-ignore
 const foo = 1;
 // #!else
+// @ts-ignore
 const foo = -1;
 // #!endif
 
@@ -294,7 +301,7 @@ const foo = -1;
 
 #### ESlint
 
-It is hard to get around this problem while linting through editor plugin, because ESLint parses the file into AST first, which caused a parsing error. So the only solution is to temporarily comment one of the declarations out during code editing.
+It is hard to get around this problem while linting through editor plugin, because ESLint parses the file into AST first, which caused a parsing error. So the only solution is to temporarily comment one or more declarations out during code editing.
 
 Otherwise, if `eslint-loader` is used, simply put it **before** `webpack-preprocessor-loader`:
 
@@ -309,7 +316,7 @@ module.exports = {
           'babel-loader',
           'eslint-loader',
           {
-            loader: 'webpack-preprocessor-loader'
+            loader: 'webpack-preprocessor-loader',
             options: {
               // ...
             },
@@ -321,6 +328,16 @@ module.exports = {
 };
 ```
 
-## Lisence
+## Lisense
 
 MIT License
+
+[version-badge]: https://img.shields.io/npm/v/webpack-preprocessor-loader.svg
+[npm]: https://www.npmjs.com/package/webpack-preprocessor-loader
+[node-badge]: https://img.shields.io/node/v/webpack-preprocessor-loader.svg
+[node]: https://nodejs.org
+[download-badge]: https://img.shields.io/npm/dw/webpack-preprocessor-loader.svg
+[license]: LICENSE
+[license-badge]: https://img.shields.io/npm/l/webpack-preprocessor-loader.svg
+[travis-badge]: https://travis-ci.org/afterwind-io/preprocessor-loader.svg?branch=master
+[travis]: https://travis-ci.org/afterwind-io/preprocessor-loader
