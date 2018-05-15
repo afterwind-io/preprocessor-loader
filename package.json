@@ -17,6 +17,10 @@
     "preprocess",
     "precompile"
   ],
+  "files": [
+    "dist/",
+    "index.js"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "mocha",
