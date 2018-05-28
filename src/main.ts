@@ -25,7 +25,7 @@ interface IPreprocessorOption {
   verbose: boolean;
 }
 
-const REGEX_DIRECTIVE = /[\t\f\v]*\/\/\s*#!(\w*)[\t\f\v]?[\t\f\v]*(.*)?/;
+const REGEX_DIRECTIVE = /[\t\f\v ]*\/\/\s*#!(\w*)[\t\f\v ]?[\t\f\v ]*(.*)?/;
 
 const DEFAULT_OPTIONS: IPreprocessorOption = {
   debug: false,
