@@ -25,7 +25,7 @@ interface IPreprocessorOption {
   verbose: boolean;
 }
 
-const REGEX_DIRECTIVE = /\s*\/\/\s*#!(\w*)\s?\s*(.*)?/;
+const REGEX_DIRECTIVE = /\s*#!(\w+)\s*(.*)?/;
 
 const DEFAULT_OPTIONS: IPreprocessorOption = {
   debug: false,
@@ -39,7 +39,7 @@ function getOptions(query: any): IPreprocessorOption {
 }
 
 /**
- * Get the result of the condition defined by "#!if" directive
+ * Get the result of the condition defined by "#!if" / "#!elseif" directive
  *
  * @param {IParamsMap} params values needed
  * @param {string} rawCondition the origin condition string
@@ -50,6 +50,16 @@ function ifComparator(params: IParamsMap, rawCondition: string): boolean {
   const values = keys.reduce((v, key) => v.concat(params[key]), []);
   const comparator = new Function(...keys, `return ${rawCondition};`);
   return comparator(...values);
+}
+
+/**
+ * Strip comment from the line
+ *
+ * @param {string} line raw ling string
+ * @returns {string} result
+ */
+function stripComment(line: string): string {
+  return line.replace(/({?\/\*)|(\*\/}?)|(\/\/)/g, '');
 }
 
 /**
@@ -67,7 +77,7 @@ function preprocessor(content: string) {
   return lines.reduce((result, line, index) => {
     const eol = index !== lines.length - 1 ? '\n' : '';
 
-    const matchGroup = REGEX_DIRECTIVE.exec(line);
+    const matchGroup = REGEX_DIRECTIVE.exec(stripComment(line));
     if (matchGroup !== null) {
       const [, directive, condition] = matchGroup;
 
@@ -107,7 +117,7 @@ function preprocessor(content: string) {
     } else {
       isKeep = scope === 'single';
 
-      return verbose ? result.concat(`/** ${line} */${eol}`) : result;
+      return verbose ? result.concat(`/* ${line} */${eol}`) : result;
     }
   }, '');
 }
@@ -116,4 +126,5 @@ module.exports = {
   REGEX_DIRECTIVE,
   ifComparator,
   preprocessor,
+  stripComment,
 };

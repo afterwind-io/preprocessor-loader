@@ -123,6 +123,65 @@ const a = 1;
 
 module.exports.R_VERBOSE = `
 // #!if foo === 1
-/** const a = 1; */
+/* const a = 1; */
 // #!endif
+`;
+
+module.exports.C_JSX_SINGLE = `
+const Component = () =>
+  <div>
+    <h1>Hello</h1>
+
+    {/* #!if SAY_HELLO_WORLD */}
+      World!
+    {/* #!else */}
+      Doge!
+    {/* #!endif */}
+
+  </div>
+`;
+
+module.exports.R_JSX_SINGLE = `
+const Component = () =>
+  <div>
+    <h1>Hello</h1>
+
+      World!
+
+  </div>
+`;
+
+module.exports.C_JSX_MULTI = `
+const Component = () =>
+  <div>
+    <h1>Hello</h1>
+
+    {/*
+      #!if SAY_HELLO_WORLD
+      Some other comments
+    */}
+      World!
+    {/*
+      /* #!else */
+    */}
+      Doge!
+    {/*
+    // #!endif
+    */}
+
+  </div>
+`;
+
+module.exports.R_JSX_MULTI = `
+const Component = () =>
+  <div>
+    <h1>Hello</h1>
+
+    {/*
+    */}
+      Doge!
+    {/*
+    */}
+
+  </div>
 `;

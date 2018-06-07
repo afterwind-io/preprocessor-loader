@@ -3,6 +3,7 @@ const {
   preprocessor: p,
   REGEX_DIRECTIVE: regex,
   ifComparator,
+  stripComment,
 } = require('../dist/main');
 const {
   C_DEBUG,
@@ -30,45 +31,53 @@ const {
   R_CUSTOM_DIRECTIVES_MULTI,
   C_VERBOSE,
   R_VERBOSE,
+  C_JSX_SINGLE,
+  R_JSX_SINGLE,
+  C_JSX_MULTI,
+  R_JSX_MULTI,
 } = require('./case');
 
 describe('Preprocessor-Loader Test', () => {
 
+  describe('Unit Test - Strip Comment', () => {
+    it('Test Case - Single Line Comment', () => {
+      const line = '// Such Doge Much Wow';
+
+      expect(stripComment(line)).equals(' Such Doge Much Wow');
+    });
+
+    it('Test Case - Multiple Line Comment', () => {
+      const line = '/* Such Doge Much Wow */';
+
+      expect(stripComment(line)).equals(' Such Doge Much Wow ');
+    });
+
+    it('Test Case - JSX Comment', () => {
+      const line = '{/* Such Doge Much Wow */}';
+
+      expect(stripComment(line)).equals(' Such Doge Much Wow ');
+    });
+  });
+
   describe('Unit Test - Directive Extraction Regex', () => {
-    it('Test case - Directive Only', () => {
-      const line = '// #!debug';
+    it('Test Case - Directive Only', () => {
+      const line = '#!debug';
       const [, directive, condition] = regex.exec(line);
 
       expect(directive).equals('debug');
       expect(condition).equals(undefined);
     });
 
-    it('Test case - No Space between Directive and Comment Slashs', () => {
-      const line = '//#!debug';
-      const [, directive, condition] = regex.exec(line);
-
-      expect(directive).equals('debug');
-      expect(condition).equals(undefined);
-    });
-
-    it('Test case - Several Spaces between Directive and Comment Slashs', () => {
-      const line = '//   #!debug';
-      const [, directive, condition] = regex.exec(line);
-
-      expect(directive).equals('debug');
-      expect(condition).equals(undefined);
-    });
-
-    it('Test case - Directive with condition', () => {
-      const line = '// #!if foo === 1';
+    it('Test Case - Directive with condition', () => {
+      const line = '#!if foo === 1';
       const [, directive, condition] = regex.exec(line);
 
       expect(directive).equals('if');
       expect(condition).equals('foo === 1');
     });
 
-    it('Test case - Directive with condition, Several Spaces between Directive and Condition', () => {
-      const line = '// #!if   foo === 1';
+    it('Test Case - Directive with condition, Several Spaces between Directive and Condition', () => {
+      const line = '#!if   foo === 1';
       const [, directive, condition] = regex.exec(line);
 
       expect(directive).equals('if');
@@ -91,6 +100,10 @@ describe('Preprocessor-Loader Test', () => {
 
     it('Test Case - Compound Condition', () => {
       expect(ifComparator(complexParams, 'foo === 1 && bar === 1')).equals(false);
+    });
+
+    it('Test Case - WTF Condition', () => {
+      expect(ifComparator(complexParams, '(function(a, b){ return a + b === 3; })(foo, bar)')).equals(true);
     });
   });
 
@@ -217,7 +230,27 @@ describe('Preprocessor-Loader Test', () => {
     });
   });
 
-  describe('Edge Test', () => {
+  describe('Case Test - JSX', () => {
+    it('Test Case - Single Line Comment', () => {
+      const option = {
+        params: {
+          SAY_HELLO_WORLD: true,
+        },
+      };
 
+      expect(p.call({ query: option }, C_JSX_SINGLE)).equals(R_JSX_SINGLE);
+    });
+
+    it('Test Case - Multiple Line Comment', () => {
+      const option = {
+        params: {
+          SAY_HELLO_WORLD: false,
+        },
+      };
+
+      expect(p.call({ query: option }, C_JSX_MULTI)).equals(R_JSX_MULTI);
+    });
   });
+
+  describe('Edge Test', () => { });
 });
