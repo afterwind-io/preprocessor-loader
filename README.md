@@ -38,6 +38,24 @@ console.log(someModule);
 const someModule = import('module-name');
 ```
 
+Also support multiple-line / JSX comment syntax (^1.04):
+
+``` jsx
+import React from 'react';
+
+/* #!debug */
+console.log('wow');
+
+function Hello() {
+  return <p>
+    Hello
+    {/* #!if ENV === 'product' */}
+    World!
+    {/* #!endif */}
+  </p>;
+}
+```
+
 Pros:
 
 - It is "Conditional Compilation";
@@ -336,7 +354,7 @@ MIT License
 [npm]: https://www.npmjs.com/package/webpack-preprocessor-loader
 [node-badge]: https://img.shields.io/node/v/webpack-preprocessor-loader.svg
 [node]: https://nodejs.org
-[download-badge]: https://img.shields.io/npm/dw/webpack-preprocessor-loader.svg
+[download-badge]: https://img.shields.io/npm/dt/webpack-preprocessor-loader.svg
 [license]: LICENSE
 [license-badge]: https://img.shields.io/npm/l/webpack-preprocessor-loader.svg
 [travis-badge]: https://travis-ci.org/afterwind-io/preprocessor-loader.svg?branch=master
