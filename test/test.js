@@ -8,10 +8,12 @@ const {
 const {
   C_DEBUG,
   R_DEBUG,
+  HTML_DEBUG,
   C_DEBUG_SINGLE,
   R_DEBUG_SINGLE,
   C_IF_ENDIF,
   R_IF_ENDIF,
+  HTML_IF_ENDIF,
   C_IF_ELSE_ENDIF,
   R_IF_ELSE_ENDIF_1,
   R_IF_ELSE_ENDIF_2,
@@ -54,6 +56,12 @@ describe('Preprocessor-Loader Test', () => {
 
     it('Test Case - JSX Comment', () => {
       const line = '{/* Such Doge Much Wow */}';
+
+      expect(stripComment(line)).equals(' Such Doge Much Wow ');
+    });
+
+    it('Test Case - HTML Comment', () => {
+      const line = '<!-- Such Doge Much Wow -->';
 
       expect(stripComment(line)).equals(' Such Doge Much Wow ');
     });
@@ -130,6 +138,9 @@ describe('Preprocessor-Loader Test', () => {
 
     it('Test Case - Standard', () => {
       expect(p.call({ query: option }, C_IF_ENDIF)).equals(R_IF_ENDIF);
+    });
+    it('Test Case - HTML', () => {
+      expect(p.call({ query: option }, HTML_IF_ENDIF)).equals(R_IF_ENDIF);
     });
   });
 

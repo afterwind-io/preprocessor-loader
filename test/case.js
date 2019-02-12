@@ -6,6 +6,11 @@ console.log('doge');
 module.exports.R_DEBUG = `
 `;
 
+module.exports.HTML_DEBUG = `
+<!-- #!debug -->
+console.log('dodge');
+`;
+
 module.exports.C_DEBUG_SINGLE = `
 // #!debug
 console.log('doge');
@@ -24,6 +29,12 @@ const a = 1;
 
 module.exports.R_IF_ENDIF = `
 const a = 1;
+`;
+
+module.exports.HTML_IF_ENDIF = `
+<!-- #!if foo === 1 -->
+const a = 1;
+<!-- #!endif -->
 `;
 
 module.exports.C_IF_ELSE_ENDIF = `

@@ -59,7 +59,7 @@ function ifComparator(params: IParamsMap, rawCondition: string): boolean {
  * @returns {string} result
  */
 function stripComment(line: string): string {
-  return line.replace(/({?\/\*)|(\*\/}?)|(\/\/)/g, '');
+return line.replace(/(<!--)|(-->)|({?\/\*)|(\*\/}?)|(\/\/)/g, '');
 }
 
 /**
