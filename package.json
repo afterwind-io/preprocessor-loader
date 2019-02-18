@@ -22,6 +22,7 @@
     "index.js"
   ],
   "scripts": {
+    "mock": "node ./mock/build.js",
     "build": "tsc",
     "test": "mocha",
     "prepare": "yarn build"
@@ -33,6 +34,7 @@
     "eslint": "^4.19.1",
     "mocha": "^5.1.1",
     "tslint": "^5.10.0",
-    "typescript": "^2.8.3"
+    "typescript": "^2.8.3",
+    "webpack": "^4.29.4"
   }
 }

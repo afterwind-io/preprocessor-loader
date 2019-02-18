@@ -8,14 +8,40 @@
 
 Bring the awesome "Conditional Compilation" to the Webpack, and more.
 
-## Why
+- [Compatibility](#compatibility)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+  - [Basics](#basics)
+  - [JSX comment syntax (^1.04)](#jsx-comment-syntax-104)
+  - [HTML comment syntax (^1.10)](#html-comment-syntax-110)
+  - [Inline directive within comment (^1.10)](#inline-directive-within-comment-110)
+  - [Multiline directive syntax (^1.10)](#multiline-directive-syntax-110)
+  - [Multiline directive syntax with comment (^1.10)](#multiline-directive-syntax-with-comment-110)
+- [Options](#options)
+  - [`debug` _](#debug-_)
+  - [`directives`](#directives)
+  - [`params`](#params)
+  - [`verbose`](#verbose)
+- [Build-in Directives](#build-in-directives)
+  - [`#!if` / `#!else` / `#!elseif` / `#!endif`](#if--else--elseif--endif)
+  - [`#!debug`](#debug)
+- [Caveats](#caveats)
+  - [Inline directive with code](#inline-directive-with-code)
+  - [Linting](#linting)
+- [Lisense](#lisense)
 
-Make life easy with the power of `webpack-preprocessor-loader`:
+## Why <!-- omit in toc -->
 
-- Output different codes based on environment (eg: development/production);
+Make life easy with the help of `webpack-preprocessor-loader` !
+
+Now leverage the full power of `Conditional Compilation` in `Webpack` to output specific codes based on conditional directives. By which you could:
+
+- Hide specific contents from the final result;
+- Import different packages by environment (eg: development/production);
+- Remove debugs in production; 
 - Split codes in production, while bundle them in development;
-- Auto remove debugs in production;
-- Other similar scenarios;
+- Many other scenarios...
 
 Simply write:
 
@@ -23,47 +49,37 @@ Simply write:
 // #!if ENV === 'develop'
 import someModule from 'module-name';
 // #!else
-const someModule = import('module-name');
+const anotherModule = import('another-module-name');
 // #!endif
 
 // #!debug
 console.log(someModule);
+
+/*
+ * My precious code!
+ * #!secret
+ */
+const the_answer_to_everything = '42';
 ```
 
 ...which yields:
 
-> ```ENV === 'product', debug === false```
+> ```ENV === 'product', debug === false, secret === false```
 
 ``` javascript
-const someModule = import('module-name');
+const anotherModule = import('another-module-name');
 ```
 
-Also support multiple-line / JSX comment syntax (^1.04):
+Also with build-in JSX/HTML comment syntax support. See [Usage](#Usage).
 
-``` jsx
-import React from 'react';
-
-/* #!debug */
-console.log('wow');
-
-function Hello() {
-  return <p>
-    Hello
-    {/* #!if ENV === 'product' */}
-    World!
-    {/* #!endif */}
-  </p>;
-}
-```
-
-Pros:
+**Pros**:
 
 - It is "Conditional Compilation";
 - Say goodbye to those "process.env.NODE_ENV"s messing around the code;
-- Hide specific contents from the final result;
+- Deals directly with raw text, so it just works on any text-based file;
 - Create custom directives if needed;
 
-Cons:
+**Cons**:
 
 - Maybe a little verbose in some cases; 
   > If so, consider using webpack.DefinePlugin backwards.
@@ -103,7 +119,7 @@ module.exports = {
             options: {
               debug: process.env.NODE_ENV !== 'product',
               directives: {
-                foo: false,
+                secret: false,
               },
               params: {
                 ENV: process.env.NODE_ENV,
@@ -118,17 +134,116 @@ module.exports = {
 };
 ```
 
-Note that **any** text-based file can be compiled, not only codes, but also html documents, styles, and more.
+## Usage
+
+> Note that **any** text-based file can be compiled, not only codes, for example:
+>  - HTML/Pug/...
+>  - Sass/Less/...
+>  - Json5/Xml/Yaml/...
+
+### Basics
+
+`Conditional Compilation` relys on a series of specified directives to decide code emitting strategy. The directive must be wrapped in a comment, followed with "`#!`".
+
+Demo in `Javascript`:
+
+``` javascript
+// Nope. Wrap it in a comment.
+'#!debug';
+
+// Depends on the value provided in options.debug...
+// #!debug
+const a = 1; // ...this line may be omitted.
+
+// What about a custom directive? 
+// Add a property on options.directives, say "secret", and set it to `false`
+// #!secret
+const b = 1; // ...this line will be omitted.
+
+// Works like real "if-else"!
+// But first set a value on options.params, say "options.params.foo = 1"
+// #!if foo === 1
+const c = 1; //
+/* #!else */ // <-- Also legal.
+const c = 2;
+// And always remember to close it by...
+// #!endif
+
+// Now try to find your own usage!
+```
+
+More detailed explainations see examples provided in [Options](#options) and [Build-in Directives](#build-in-directives).
+
+### JSX comment syntax (^1.04)
+
+``` jsx
+import React from 'react';
+
+/* #!debug */
+console.log('wow');
+
+function Hello() {
+  return <div>
+    {/* #!debug */}
+    <p>oops</p>
+
+    {/* #!if stage === 'product' */}
+    <p>Ready to go</p>
+    {/* #!endif */}
+  </div>;
+}
+```
+
+### HTML comment syntax (^1.10)
+
+``` html
+<body>
+  <!-- #!debug -->
+  <p>oops</p>
+
+  <!-- #!if stage === 'product' -->
+  <p>Ready to go</p>
+  <!-- #!endif -->
+</body>
+```
+
+### Inline directive within comment (^1.10)
+
+See below.
+
+### Multiline directive syntax (^1.10)
+
+See below.
+
+### Multiline directive syntax with comment (^1.10)
+
+The following syntax are equivalent and legal:
+
+``` javascript
+// #!if stage === 'product'
+/* #!if stage === 'product' */
+
+/*
+  #!if stage === 'product'
+*/
+
+/*
+ * Look mom I have a comment!
+ * #!if stage === 'product'
+ */
+
+// I have a comment too. #!if stage === 'product'
+```
 
 ## Options
 
-### `debug`
+### `debug` _
 
 > type: `boolean`
 >
 > default: `false`
 
-Provide constant value for buildin `#!debug` directive. See **Directives - #!debug**.
+Provide constant value for build-in `#!debug` directive. See [**Directives - #!debug**](#debug).
 
 ### `directives`
 
@@ -136,7 +251,7 @@ Provide constant value for buildin `#!debug` directive. See **Directives - #!deb
 >
 > default: `{}`
 
-Define custom directives. For example, to create a directive called "foo":
+Define custom directives. For example, to create a directive called "secret":
 
 ``` javascript
 // In webpack config...
@@ -145,7 +260,7 @@ Define custom directives. For example, to create a directive called "foo":
   loader: 'webpack-preprocessor-loader',
   options: {
     directives: {
-      foo: false,
+      secret: false,
     },
   },
 },
@@ -154,19 +269,19 @@ Define custom directives. For example, to create a directive called "foo":
 In code:
 
 ``` javascript
-// #!foo
+// #!secret
 console.log('wow'); // This line will be omitted
 ```
 
-Note that the custom directive only marks its **next** line, which means:
+Note that the custom directive only affects its **next** line, which means:
 
 ``` javascript
-// #!foo
+// #!secret
 console.log('Removed'); // This line will be omitted
 console.log('Kept'); // This line will not be affected by "#!foo", hence it will be kept anyway
 ```
 
-If an undefined directive is referenced, say "bar", the next line marked by `#!bar` will always be omitted, because the value of `bar` is `undefined`, identical as `false`.
+If an undefined directive is referenced, say "foo", the next line marked by `#!foo` will always be omitted, because the value of `foo` is `undefined`, identical as `false`.
 
 ### `params`
 
@@ -174,7 +289,7 @@ If an undefined directive is referenced, say "bar", the next line marked by `#!b
 >
 > default: `{}`
 
-Provide constant values for buildin `#!if` / `#!elseif` / `#!else` / `#!endif` directives. See **Directives - #!if / #!else / #!elseif / #!endif**
+Provide constant values for build-in `#!if` / `#!elseif` / `#!else` / `#!endif` directives. See [**Directives - #!if / #!else / #!elseif / #!endif**](#if--else--elseif--endif)
 
 ### `verbose`
 
@@ -198,13 +313,13 @@ If set to `true`, yields:
 
 ``` javascript
 // #!if ENV === 'develop'
-/** console.log('many doge'); */
+// console.log('many doge');
 // #!else
 console.log('much wow');
 // #!endif
 ```
 
-## Directives
+## Build-in Directives
 
 ### `#!if` / `#!else` / `#!elseif` / `#!endif`
 
@@ -274,7 +389,7 @@ A semantic and handy directive to mark specific line only to be kept when needed
 console.log('test'); // This line will be omitted
 ```
 
-Note that the `#!debug` directive only marks its **next** line, which means:
+Note that the `#!debug` directive only affects its **next** line, which means:
 
 ``` javascript
 // options.debug === false
@@ -284,9 +399,27 @@ console.log('Removed'); // This line will be omitted
 console.log('Kept'); // This line will not be affected by "#!debug", hence it will be kept anyway
 ```
 
-## Trivia (Maybe not)
+## Caveats
 
-### When combined with Typescript/ESlint
+### Inline directive with code
+
+The following code may not work as expected:
+
+``` javascript
+// debug === false
+const foo = 1; /* #!debug */    // <-- the directive will be ignored and this line will be kept
+const bar = 2;                  // <-- this line will be kept anyway
+
+// or
+
+// debug === true
+/* #!debug */ const foo = 1;    // <-- this line will be omitted anyway
+const bar = 2;
+```
+
+So please make sure **not** mix directive and code on the same line.
+
+### Linting
 
 The following code yields errors during linting:
 

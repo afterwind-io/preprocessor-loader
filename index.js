@@ -1,1 +1,1 @@
-module.exports = require('./dist/main').preprocessor;
+module.exports = require('./dist/preprocessor').preprocessor;

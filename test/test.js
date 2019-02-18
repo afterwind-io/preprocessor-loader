@@ -1,17 +1,14 @@
 const expect = require('chai').expect;
-const {
-  preprocessor: p,
-  REGEX_DIRECTIVE: regex,
-  ifComparator,
-  stripComment,
-} = require('../dist/main');
+const { ifComparator, getDirective } = require('../dist/filter');
+const { preprocessor: p } = require('../dist/preprocessor');
 const {
   C_DEBUG,
   R_DEBUG,
   C_DEBUG_SINGLE,
   R_DEBUG_SINGLE,
   C_IF_ENDIF,
-  R_IF_ENDIF,
+  R_IF_ENDIF_TURE,
+  R_IF_ENDIF_FALSE,
   C_IF_ELSE_ENDIF,
   R_IF_ELSE_ENDIF_1,
   R_IF_ELSE_ENDIF_2,
@@ -29,56 +26,68 @@ const {
   R_CUSTOM_DIRECTIVES_SINGLE,
   C_CUSTOM_DIRECTIVES_MULTI,
   R_CUSTOM_DIRECTIVES_MULTI,
-  C_VERBOSE,
-  R_VERBOSE,
+  C_VERBOSE_SINGLE,
+  R_VERBOSE_SINGLE,
+  C_VERBOSE_MULTI,
+  R_VERBOSE_MULTI,
+  C_VERBOSE_MIXED,
+  R_VERBOSE_MIXED,
+  C_CASE_INLINE_COMMENT_SINGLE,
+  R_CASE_INLINE_COMMENT_SINGLE,
+  C_CASE_INLINE_COMMENT_MULTI,
+  R_CASE_INLINE_COMMENT_MULTI,
+  C_CASE_NORMAL_COMMENT,
+  R_CASE_NORMAL_COMMENT,
   C_JSX_SINGLE,
   R_JSX_SINGLE,
   C_JSX_MULTI,
   R_JSX_MULTI,
+  C_HTML_SINGLE,
+  R_HTML_SINGLE,
+  C_HTML_MULTI,
+  R_HTML_MULTI,
+  C_EGDE_CODE_BEFORE_DIRECTIVE,
+  R_EGDE_CODE_BEFORE_DIRECTIVE,
+  C_EDGE_CODE_AFTER_DIRECTIVE,
+  R_EDGE_CODE_AFTER_DIRECTIVE,
+  C_EDGE_COMMENT_AFTER_DIRECTIVE,
+  R_EDGE_COMMENT_AFTER_DIRECTIVE,
 } = require('./case');
+const {
+  C_JS,
+  R_JS,
+} = require('./case_javascript');
+const {
+  C_JSX,
+  R_JSX,
+} = require('./case_jsx');
+const {
+  C_HTML,
+  R_HTML,
+} = require('./case_html');
 
 describe('Preprocessor-Loader Test', () => {
 
-  describe('Unit Test - Strip Comment', () => {
-    it('Test Case - Single Line Comment', () => {
-      const line = '// Such Doge Much Wow';
-
-      expect(stripComment(line)).equals(' Such Doge Much Wow');
-    });
-
-    it('Test Case - Multiple Line Comment', () => {
-      const line = '/* Such Doge Much Wow */';
-
-      expect(stripComment(line)).equals(' Such Doge Much Wow ');
-    });
-
-    it('Test Case - JSX Comment', () => {
-      const line = '{/* Such Doge Much Wow */}';
-
-      expect(stripComment(line)).equals(' Such Doge Much Wow ');
-    });
-  });
-
-  describe('Unit Test - Directive Extraction Regex', () => {
-    it('Test Case - Directive Only', () => {
+  describe('Unit Test - Directive Extraction Function', () => {
+    it('Directive Only', () => {
       const line = '#!debug';
-      const [, directive, condition] = regex.exec(line);
+      const [directive, condition] = getDirective(line);
 
       expect(directive).equals('debug');
-      expect(condition).equals(undefined);
+      expect(condition).equals('');
     });
 
-    it('Test Case - Directive with condition', () => {
+    it('Directive with condition', () => {
       const line = '#!if foo === 1';
-      const [, directive, condition] = regex.exec(line);
+      const [directive, condition] = getDirective(line);
 
       expect(directive).equals('if');
       expect(condition).equals('foo === 1');
     });
 
-    it('Test Case - Directive with condition, Several Spaces between Directive and Condition', () => {
-      const line = '#!if   foo === 1';
-      const [, directive, condition] = regex.exec(line);
+    it('Directive with condition, spaces included', () => {
+      const line = '   #!if   foo === 1';
+      const [directive, condition] = getDirective(line);
 
       expect(directive).equals('if');
       expect(condition).equals('foo === 1');
@@ -86,71 +95,73 @@ describe('Preprocessor-Loader Test', () => {
   });
 
   describe('Unit Test - ifComparator', () => {
-    const simpleParams = {
-      foo: 1,
-    };
-    const complexParams = {
+    const params = {
       foo: 1,
       bar: 2,
     };
 
-    it('Test Case - Single Condition', () => {
-      expect(ifComparator(simpleParams, 'foo === 1')).equals(true);
+    it('Single Condition', () => {
+      expect(ifComparator(params, 'foo === 1')).equals(true);
     });
 
-    it('Test Case - Compound Condition', () => {
-      expect(ifComparator(complexParams, 'foo === 1 && bar === 1')).equals(false);
+    it('Compound Condition', () => {
+      expect(ifComparator(params, 'foo === 1 && bar === 1')).equals(false);
     });
 
-    it('Test Case - WTF Condition', () => {
-      expect(ifComparator(complexParams, '(function(a, b){ return a + b === 3; })(foo, bar)')).equals(true);
+    it('WTF Condition', () => {
+      expect(ifComparator(params, '(function(a, b){ return a + b === 3; })(foo, bar)')).equals(true);
     });
   });
 
-  describe('Case Test - #!debug', () => {
+  describe('Directive Test - #!debug', () => {
     const option = {
       debug: false,
     };
 
-    it('Test Case - Standard', () => {
+    it('Standard', () => {
       expect(p.call({ query: option }, C_DEBUG)).equals(R_DEBUG);
     });
 
-    it('Test Case - Only the line exactly below "#!debug" should be processed', () => {
+    it('Only the line exactly below "#!debug" should be processed', () => {
       expect(p.call({ query: option }, C_DEBUG_SINGLE)).equals(R_DEBUG_SINGLE);
     });
   });
 
-  describe('Case Test - #!if | #!endif', () => {
+  describe('Directive Test - #!if | #!endif', () => {
     const option = {
       params: {
         foo: 1,
       },
     };
 
-    it('Test Case - Standard', () => {
-      expect(p.call({ query: option }, C_IF_ENDIF)).equals(R_IF_ENDIF);
+    it('Standard - 1', () => {
+      expect(p.call({ query: option }, C_IF_ENDIF)).equals(R_IF_ENDIF_TURE);
+    });
+
+    it('Standard - 2', () => {
+      option.params.foo = 2;
+      expect(p.call({ query: option }, C_IF_ENDIF)).equals(R_IF_ENDIF_FALSE);
     });
   });
 
-  describe('Case Test - #!if | #!else | #!endif', () => {
+  describe('Directive Test - #!if | #!else | #!endif', () => {
     const option = {
       params: {
         foo: 1,
       },
     };
 
-    it('Test Case - Standard - 1', () => {
+    it('Standard - 1', () => {
       expect(p.call({ query: option }, C_IF_ELSE_ENDIF)).equals(R_IF_ELSE_ENDIF_1);
     });
 
-    it('Test Case - Standard - 2', () => {
+    it('Standard - 2', () => {
       option.params.foo = 2;
       expect(p.call({ query: option }, C_IF_ELSE_ENDIF)).equals(R_IF_ELSE_ENDIF_2);
     });
   });
 
-  describe('Case Test - #!if | #!elseif | #!endif', () => {
+  describe('Directive Test - #!if | #!elseif | #!endif', () => {
     const option = {
       params: {
         foo: 1,
@@ -158,17 +169,17 @@ describe('Preprocessor-Loader Test', () => {
       },
     };
 
-    it('Test Case - Standard - 1', () => {
+    it('Standard - 1', () => {
       expect(p.call({ query: option }, C_IF_ELSEIF_ENDIF)).equals(R_IF_ELSEIF_ENDIF_1);
     });
 
-    it('Test Case - Standard - 2', () => {
+    it('Standard - 2', () => {
       option.params.foo = 2;
       expect(p.call({ query: option }, C_IF_ELSEIF_ENDIF)).equals(R_IF_ELSEIF_ENDIF_2);
     });
   });
 
-  describe('Case Test - #!if | #!elseif | #!else | #!endif', () => {
+  describe('Directive Test - #!if | #!elseif | #!else | #!endif', () => {
     const option = {
       params: {
         foo: 1,
@@ -176,27 +187,27 @@ describe('Preprocessor-Loader Test', () => {
       },
     };
 
-    it('Test Case - Standard - 1', () => {
+    it('Standard - 1', () => {
       expect(p.call({ query: option }, C_IF_ELSEIF_ELSE_ENDIF)).equals(R_IF_ELSEIF_ELSE_ENDIF_1);
     });
 
-    it('Test Case - Standard - 2', () => {
+    it('Standard - 2', () => {
       option.params.foo = 2;
       expect(p.call({ query: option }, C_IF_ELSEIF_ELSE_ENDIF)).equals(R_IF_ELSEIF_ELSE_ENDIF_2);
     });
 
-    it('Test Case - Standard - 3', () => {
+    it('Standard - 3', () => {
       option.params.bar = 2;
       expect(p.call({ query: option }, C_IF_ELSEIF_ELSE_ENDIF)).equals(R_IF_ELSEIF_ELSE_ENDIF_3);
     });
 
-    it('Test Case - Standard - 4', () => {
+    it('Standard - 4', () => {
       option.params.bar = 3;
       expect(p.call({ query: option }, C_IF_ELSEIF_ELSE_ENDIF)).equals(R_IF_ELSEIF_ELSE_ENDIF_4);
     });
   });
 
-  describe('Case Test - Custom Directives', () => {
+  describe('Directive Test - Custom Directives', () => {
     const option = {
       directives: {
         doge: false,
@@ -204,34 +215,61 @@ describe('Preprocessor-Loader Test', () => {
       },
     };
 
-    it('Test Case - Standard', () => {
+    it('Standard', () => {
       expect(p.call({ query: option }, C_CUSTOM_DIRECTIVES)).equals(R_CUSTOM_DIRECTIVES);
     });
 
-    it('Test Case - Only the line exactly below the directive should be processed', () => {
+    it('Only the line exactly below the directive should be processed', () => {
       expect(p.call({ query: option }, C_CUSTOM_DIRECTIVES_SINGLE)).equals(R_CUSTOM_DIRECTIVES_SINGLE);
     });
 
-    it('Test Case - Multiple Custom Directives', () => {
+    it('Multiple Custom Directives', () => {
       expect(p.call({ query: option }, C_CUSTOM_DIRECTIVES_MULTI)).equals(R_CUSTOM_DIRECTIVES_MULTI);
     });
   });
 
-  describe('Case Test - Options', () => {
-    it('Test Case - "verbose"', () => {
-      const option = {
-        params: {
-          foo: 2,
-        },
-        verbose: true,
-      };
+  describe('Option Test - Verbose', () => {
+    const option = {
+      params: {
+        foo: 2,
+      },
+      debug: false,
+      verbose: true,
+    };
 
-      expect(p.call({ query: option }, C_VERBOSE)).equals(R_VERBOSE);
+    it('Single Line', () => {
+      expect(p.call({ query: option }, C_VERBOSE_SINGLE)).equals(R_VERBOSE_SINGLE);
+    });
+
+    it('Multiple Lines', () => {
+      expect(p.call({ query: option }, C_VERBOSE_MULTI)).equals(R_VERBOSE_MULTI);
+    });
+
+    it('Verbose lines should be commented with previous symbols', () => {
+      expect(p.call({ query: option }, C_VERBOSE_MIXED)).equals(R_VERBOSE_MIXED);
     });
   });
 
-  describe('Case Test - JSX', () => {
-    it('Test Case - Single Line Comment', () => {
+  describe('Case Test', () => {
+    const option = {
+      debug: false,
+    };
+
+    it('Single-line Directive with inline comment', () => {
+      expect(p.call({ query: option }, C_CASE_INLINE_COMMENT_SINGLE)).equals(R_CASE_INLINE_COMMENT_SINGLE);
+    });
+
+    it('Multi-line Directive with inline comment', () => {
+      expect(p.call({ query: option }, C_CASE_INLINE_COMMENT_MULTI)).equals(R_CASE_INLINE_COMMENT_MULTI);
+    });
+
+    it('Normal comment should not be affected', () => {
+      expect(p.call({ query: option }, C_CASE_NORMAL_COMMENT)).equals(R_CASE_NORMAL_COMMENT);
+    });
+  });
+
+  describe('Syntax Test - JSX', () => {
+    it('Single Line Comment', () => {
       const option = {
         params: {
           SAY_HELLO_WORLD: true,
@@ -241,7 +279,7 @@ describe('Preprocessor-Loader Test', () => {
       expect(p.call({ query: option }, C_JSX_SINGLE)).equals(R_JSX_SINGLE);
     });
 
-    it('Test Case - Multiple Line Comment', () => {
+    it('Multiple Line Comment', () => {
       const option = {
         params: {
           SAY_HELLO_WORLD: false,
@@ -252,5 +290,68 @@ describe('Preprocessor-Loader Test', () => {
     });
   });
 
-  describe('Edge Test', () => { });
+  describe('Syntax Test - HTML', () => {
+    it('Single Line Comment', () => {
+      const option = {
+        params: {
+          SAY_HELLO_WORLD: true,
+        },
+      };
+
+      expect(p.call({ query: option }, C_HTML_SINGLE)).equals(R_HTML_SINGLE);
+    });
+
+    it('Multiple Line Comment', () => {
+      const option = {
+        params: {
+          SAY_HELLO_WORLD: false,
+        },
+      };
+
+      expect(p.call({ query: option }, C_HTML_MULTI)).equals(R_HTML_MULTI);
+    });
+
+    // it.skip('Mixed with Script Tag', () => {
+
+    // });
+  });
+
+  describe('Full test', () => {
+    const option = {
+      debug: false,
+      params: {
+        stage: 'develop',
+      },
+    };
+
+    it('Javascript', () => {
+      expect(p.call({ query: option }, C_JS)).equals(R_JS);
+    });
+
+    it('JSX', () => {
+      expect(p.call({ query: option }, C_JSX)).equals(R_JSX);
+    });
+
+    it('HTML', () => {
+      expect(p.call({ query: option }, C_HTML)).equals(R_HTML);
+    });
+  });
+
+  describe('Edge Test', () => {
+    const option = {
+      debug: false,
+    };
+
+    it('Directive after the same-line code should be ignored', () => {
+      expect(p.call(option, C_EGDE_CODE_BEFORE_DIRECTIVE)).equals(R_EGDE_CODE_BEFORE_DIRECTIVE);
+    });
+
+    it('Code after the same-line directive should be ignored', () => {
+      expect(p.call(option, C_EDGE_CODE_AFTER_DIRECTIVE)).equals(R_EDGE_CODE_AFTER_DIRECTIVE);
+    });
+
+    it('Normal comment after directive should be proceeded correctly', () => {
+      expect(p.call(option, C_EDGE_COMMENT_AFTER_DIRECTIVE)).equals(R_EDGE_COMMENT_AFTER_DIRECTIVE);
+    });
+  });
 });

@@ -1,0 +1,3 @@
+// #!debug
+'oops';
+'Hello world!';
