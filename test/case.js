@@ -364,3 +364,9 @@ module.exports.C_EDGE_COMMENT_AFTER_DIRECTIVE = `
 module.exports.R_EDGE_COMMENT_AFTER_DIRECTIVE = `
 // not me
 `;
+
+module.exports.C_EDGE_NO_EMPTY_LINE_AS_EOF = `
+'oops'`
+
+module.exports.R_EDGE_NO_EMPTY_LINE_AS_EOF = `
+'oops'`

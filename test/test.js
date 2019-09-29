@@ -52,6 +52,8 @@ const {
   R_EDGE_CODE_AFTER_DIRECTIVE,
   C_EDGE_COMMENT_AFTER_DIRECTIVE,
   R_EDGE_COMMENT_AFTER_DIRECTIVE,
+  C_EDGE_NO_EMPTY_LINE_AS_EOF,
+  R_EDGE_NO_EMPTY_LINE_AS_EOF,
 } = require('./case');
 const {
   C_JS,
@@ -352,6 +354,10 @@ describe('Preprocessor-Loader Test', () => {
 
     it('Normal comment after directive should be proceeded correctly', () => {
       expect(p.call(option, C_EDGE_COMMENT_AFTER_DIRECTIVE)).equals(R_EDGE_COMMENT_AFTER_DIRECTIVE);
+    });
+
+    it(`Last line should not be omitted if no new-line char presents as EOF`, () => {
+      expect(p.call(option, C_EDGE_NO_EMPTY_LINE_AS_EOF)).equals(R_EDGE_NO_EMPTY_LINE_AS_EOF);
     });
   });
 });

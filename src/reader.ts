@@ -48,6 +48,7 @@ export function* reader(content: string): IterableIterator<IReaderResult> {
         return null;
     }
 
+    let is_eof = false;
     let ptr = -1;
     let char = '';
     let block = '';
@@ -58,11 +59,19 @@ export function* reader(content: string): IterableIterator<IReaderResult> {
     let skip_to_next_line = false;
 
     while (++ptr < len) {
+        is_eof = ptr === len - 1;
         char = content[ptr];
         raw = raw.concat(char);
 
         if (skip_to_next_line) {
-            if (isNewLine(char)) {
+            /**
+             * NOTE:
+             * If file ends without a new-line char,
+             * the last line will be directly omitted.
+             *
+             * See Issue: https://github.com/afterwind-io/preprocessor-loader/issues/4
+             */
+            if (isNewLine(char) || is_eof) {
                 yield {
                     is_comment: false,
                     raw,
