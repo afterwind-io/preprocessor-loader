@@ -365,8 +365,28 @@ module.exports.R_EDGE_COMMENT_AFTER_DIRECTIVE = `
 // not me
 `;
 
-module.exports.C_EDGE_NO_EMPTY_LINE_AS_EOF = `
-'oops'`
+module.exports.C_EDGE_NO_EOF_SINGLE_CHAR = `
+.poi {
+  // oops
+}`;
 
-module.exports.R_EDGE_NO_EMPTY_LINE_AS_EOF = `
-'oops'`
+module.exports.R_EDGE_NO_EOF_SINGLE_CHAR = `
+.poi {
+  // oops
+}`;
+
+module.exports.C_EDGE_NO_EOF_MULTI_CHARS = `
+// oops
+'wow';`;
+
+module.exports.R_EDGE_NO_EOF_MULTI_CHARS = `
+// oops
+'wow';`;
+
+module.exports.C_EDGE_NO_EOF_COMMENT = `
+/* oops
+// wow`;
+
+module.exports.R_EDGE_NO_EOF_COMMENT = `
+/* oops
+// wow`;

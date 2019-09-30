@@ -52,8 +52,12 @@ const {
   R_EDGE_CODE_AFTER_DIRECTIVE,
   C_EDGE_COMMENT_AFTER_DIRECTIVE,
   R_EDGE_COMMENT_AFTER_DIRECTIVE,
-  C_EDGE_NO_EMPTY_LINE_AS_EOF,
-  R_EDGE_NO_EMPTY_LINE_AS_EOF,
+  C_EDGE_NO_EOF_SINGLE_CHAR,
+  R_EDGE_NO_EOF_SINGLE_CHAR,
+  C_EDGE_NO_EOF_MULTI_CHARS,
+  R_EDGE_NO_EOF_MULTI_CHARS,
+  C_EDGE_NO_EOF_COMMENT,
+  R_EDGE_NO_EOF_COMMENT,
 } = require('./case');
 const {
   C_JS,
@@ -356,8 +360,18 @@ describe('Preprocessor-Loader Test', () => {
       expect(p.call(option, C_EDGE_COMMENT_AFTER_DIRECTIVE)).equals(R_EDGE_COMMENT_AFTER_DIRECTIVE);
     });
 
-    it(`Last line should not be omitted if no new-line char presents as EOF`, () => {
-      expect(p.call(option, C_EDGE_NO_EMPTY_LINE_AS_EOF)).equals(R_EDGE_NO_EMPTY_LINE_AS_EOF);
+    describe(`Last line should not be omitted if no new-line char presents as EOF`, () => {
+      it(`Single char on the last line`, () => {
+        expect(p.call(option, C_EDGE_NO_EOF_SINGLE_CHAR)).equals(R_EDGE_NO_EOF_SINGLE_CHAR);
+      });
+
+      it(`Multiple chars on the last line`, () => {
+        expect(p.call(option, C_EDGE_NO_EOF_MULTI_CHARS)).equals(R_EDGE_NO_EOF_MULTI_CHARS);
+      });
+
+      it(`Comment on the last line`, () => {
+        expect(p.call(option, C_EDGE_NO_EOF_COMMENT)).equals(R_EDGE_NO_EOF_COMMENT);
+      });
     });
   });
 });

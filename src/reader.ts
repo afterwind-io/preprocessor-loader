@@ -41,6 +41,16 @@ const open_close_pair: ICommentOpenClosePair = {
     '<!--': '-->',
 };
 
+function getPlainTextResult(raw: string): IReaderResult {
+    return {
+        is_comment: false,
+        raw,
+        block: '',
+        c_open: null,
+        c_close: null,
+    };
+}
+
 export function* reader(content: string): IterableIterator<IReaderResult> {
     const len = content.length;
 
@@ -64,41 +74,19 @@ export function* reader(content: string): IterableIterator<IReaderResult> {
         raw = raw.concat(char);
 
         if (skip_to_next_line) {
-            /**
-             * NOTE:
-             * If file ends without a new-line char,
-             * the last line will be directly omitted.
-             *
-             * See Issue: https://github.com/afterwind-io/preprocessor-loader/issues/4
-             */
-            if (isNewLine(char) || is_eof) {
-                yield {
-                    is_comment: false,
-                    raw,
-                    block: '',
-                    c_open: null,
-                    c_close: null,
-                };
+            if (isNewLine(char)) {
+                yield getPlainTextResult(raw);
 
                 raw = '';
                 skip_to_next_line = false;
             }
-            continue;
-        }
-
-        if (!in_new_comment) {
+        } else if (!in_new_comment) {
             if (isWhitespace(char)) {
                 continue;
             }
 
             if (isNewLine(char)) {
-                yield {
-                    is_comment: false,
-                    raw,
-                    block: '',
-                    c_open: null,
-                    c_close: null,
-                };
+                yield getPlainTextResult(raw);
 
                 raw = '';
                 continue;
@@ -107,7 +95,6 @@ export function* reader(content: string): IterableIterator<IReaderResult> {
             const open = getCommentOpen(char, ptr, content);
             if (!open) {
                 skip_to_next_line = true;
-                continue;
             } else {
                 current_open = open;
                 current_close = open_close_pair[open];
@@ -142,6 +129,18 @@ export function* reader(content: string): IterableIterator<IReaderResult> {
             } else {
                 block = block.concat(char);
             }
+        }
+
+        /**
+         * NOTE:
+         * If file ends without a new-line char,
+         * the last line will be directly omitted.
+         *
+         * See Issue: https://github.com/afterwind-io/preprocessor-loader/issues/4
+         */
+        if (is_eof) {
+            yield getPlainTextResult(raw);
+            break;
         }
     }
 
