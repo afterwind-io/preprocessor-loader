@@ -6,6 +6,7 @@ import { IPreprocessorOption } from './type';
 
 export interface IWebpackLoaderContext {
     query: IPreprocessorOption;
+    callback: (err: Error | null, content: string | Buffer, sourceMap?: any, meta?: any) => void;
 }
 
 /**
@@ -16,7 +17,7 @@ export interface IWebpackLoaderContext {
  * @param {string} content raw text file
  * @returns {string}
  */
-export function preprocessor(this: IWebpackLoaderContext, content: string): string {
+export function preprocessor(this: IWebpackLoaderContext, content: string, sourcemap: any) {
     const { directives, params, verbose } = getOptions(this.query);
 
     const r = reader(content);
@@ -39,8 +40,11 @@ export function preprocessor(this: IWebpackLoaderContext, content: string): stri
         const filter_state = f.next(reader_state).value;
         p.next(Object.assign(o, reader_state, filter_state));
     }
-
-    return p.next({}).value;
+    this.callback(
+        null,
+        p.next({}).value,
+        sourcemap,
+    );
 }
 
 function getOptions(query: Partial<IPreprocessorOption>): IPreprocessorOption {
