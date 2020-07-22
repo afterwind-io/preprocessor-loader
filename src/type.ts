@@ -26,3 +26,8 @@ export interface IPreprocessorOption {
      */
     verbose: boolean;
 }
+
+export interface ExtendedIterableIterator<T, TReturn, TNext>
+    extends Iterator<T, TReturn, TNext> {
+    [Symbol.iterator](): ExtendedIterableIterator<T, TReturn, TNext>;
+}

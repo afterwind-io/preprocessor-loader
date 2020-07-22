@@ -40,7 +40,7 @@ export function preprocessor(this: IWebpackLoaderContext, content: string): stri
         p.next(Object.assign(o, reader_state, filter_state));
     }
 
-    return p.next({}).value;
+    return p.next({} as IPrinterOption).value || '';
 }
 
 function getOptions(query: Partial<IPreprocessorOption>): IPreprocessorOption {

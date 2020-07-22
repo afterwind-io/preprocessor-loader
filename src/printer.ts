@@ -1,9 +1,14 @@
 import { IFilterResult } from './filter';
 import { IReaderResult } from './reader';
+import { ExtendedIterableIterator } from './type';
 
 export type IPrinterOption = IReaderResult & IFilterResult;
 
-export function* printer(verbose: boolean): IterableIterator<string> {
+export function* printer(verbose: boolean): ExtendedIterableIterator<
+    string,
+    string | undefined,
+    IPrinterOption
+> {
     let result: string = '';
     let last_c_open = '';
     let last_c_close = '';
@@ -16,7 +21,7 @@ export function* printer(verbose: boolean): IterableIterator<string> {
             is_keep,
             is_directive,
             is_comment,
-        } = (yield result) as IPrinterOption;
+        } = (yield result)!;
 
         if (raw === undefined) {
             return result;

@@ -1,5 +1,6 @@
 import { IReaderResult } from './reader';
 import {
+    ExtendedIterableIterator,
     IDirectivesMap,
     IParamsMap,
 } from './type';
@@ -27,7 +28,14 @@ const REGEX_DIRECTIVE = /#!(\w+)\s*(.*)?/;
  * @param {IParamsMap} params values for custom directives
  * @returns {IterableIterator<IFilterResult>} the flag indicates the inner state of filter
  */
-export function* filter(directives: IDirectivesMap, params: IParamsMap): IterableIterator<IFilterResult> {
+export function* filter(
+    directives: IDirectivesMap,
+    params: IParamsMap
+): ExtendedIterableIterator<
+    IFilterResult,
+    IFilterResult | undefined,
+    IFilterOption
+> {
     let is_keep = true;
     let last_is_keep = false;
     let last_is_directive = false;
@@ -37,7 +45,7 @@ export function* filter(directives: IDirectivesMap, params: IParamsMap): Iterabl
         const { block, is_comment } = (yield {
             is_directive: last_is_directive,
             is_keep: last_is_directive ? false : is_keep,
-        }) as IFilterOption;
+        })!;
 
         let is_directive = false;
         let directive = '';
