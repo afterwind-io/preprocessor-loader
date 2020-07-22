@@ -29,12 +29,12 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^10.0.6",
-    "chai": "^4.1.2",
-    "eslint": "^4.19.1",
-    "mocha": "^5.1.1",
-    "tslint": "^5.10.0",
-    "typescript": "^2.8.3",
-    "webpack": "^4.29.4"
+    "@types/node": "^14.0.24",
+    "chai": "^4.2.0",
+    "eslint": "^7.5.0",
+    "mocha": "^8.0.1",
+    "tslint": "^6.1.2",
+    "typescript": "^3.9.7",
+    "webpack": "^4.43.0"
   }
 }
