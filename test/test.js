@@ -8,7 +8,7 @@ const {
   R_DEBUG_SINGLE,
   C_IF_ENDIF,
   C_IF_ENDIF_1,
-  R_IF_ENDIF_TURE,
+  R_IF_ENDIF_TRUE,
   R_IF_ENDIF_FALSE,
   C_IF_ELSE_ENDIF,
   R_IF_ELSE_ENDIF_1,
@@ -142,7 +142,7 @@ describe('Preprocessor-Loader Test', () => {
     };
 
     it('Standard - 1', () => {
-      expect(p.call({ query: option }, C_IF_ENDIF)).equals(R_IF_ENDIF_TURE);
+      expect(p.call({ query: option }, C_IF_ENDIF)).equals(R_IF_ENDIF_TRUE);
     });
 
     it('Standard - 2', () => {
@@ -152,7 +152,7 @@ describe('Preprocessor-Loader Test', () => {
 
     it('Standard - 3', () => {
       option.params.bar = [0, 1];
-      expect(p.call({ query: option }, C_IF_ENDIF_1)).equals(R_IF_ENDIF_TURE);
+      expect(p.call({ query: option }, C_IF_ENDIF_1)).equals(R_IF_ENDIF_TRUE);
     });
   });
 

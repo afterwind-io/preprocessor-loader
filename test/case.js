@@ -32,7 +32,7 @@ const b = 2;
 
 
 
-module.exports.R_IF_ENDIF_TURE = `
+module.exports.R_IF_ENDIF_TRUE = `
 const a = 1;
 const b = 2;
 `;
