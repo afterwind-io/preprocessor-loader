@@ -23,6 +23,15 @@ const b = 2;
 // #!endif
 `;
 
+module.exports.C_IF_ENDIF_1 = `
+// #!if bar
+const a = 1;
+const b = 2;
+// #!endif
+`;
+
+
+
 module.exports.R_IF_ENDIF_TURE = `
 const a = 1;
 const b = 2;

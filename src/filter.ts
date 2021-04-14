@@ -106,7 +106,10 @@ export function* filter(
  */
 export function ifComparator(params: IParamsMap, rawCondition: string): boolean {
     const keys = Object.keys(params);
-    const values = keys.reduce((v, key) => v.concat(params[key]), []);
+    const values = keys.reduce((v, key) => {
+        v.push(params[key]);
+        return v;
+    }, [] as any[]);
     const comparator = new Function(...keys, `return ${rawCondition};`);
     return comparator(...values);
 }

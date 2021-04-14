@@ -7,6 +7,7 @@ const {
   C_DEBUG_SINGLE,
   R_DEBUG_SINGLE,
   C_IF_ENDIF,
+  C_IF_ENDIF_1,
   R_IF_ENDIF_TURE,
   R_IF_ENDIF_FALSE,
   C_IF_ELSE_ENDIF,
@@ -147,6 +148,11 @@ describe('Preprocessor-Loader Test', () => {
     it('Standard - 2', () => {
       option.params.foo = 2;
       expect(p.call({ query: option }, C_IF_ENDIF)).equals(R_IF_ENDIF_FALSE);
+    });
+
+    it('Standard - 3', () => {
+      option.params.bar = [0, 1];
+      expect(p.call({ query: option }, C_IF_ENDIF_1)).equals(R_IF_ENDIF_TURE);
     });
   });
 
