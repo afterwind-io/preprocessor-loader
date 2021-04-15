@@ -23,7 +23,7 @@ const b = 2;
 // #!endif
 `;
 
-module.exports.R_IF_ENDIF_TURE = `
+module.exports.R_IF_ENDIF_TRUE = `
 const a = 1;
 const b = 2;
 `;
@@ -335,12 +335,12 @@ module.exports.R_HTML_MIXED = `
 </script>
 `;
 
-module.exports.C_EGDE_CODE_BEFORE_DIRECTIVE = `
+module.exports.C_EDGE_CODE_BEFORE_DIRECTIVE = `
 const a = 1;/* #!debug */
 const b = 2;
 `;
 
-module.exports.R_EGDE_CODE_BEFORE_DIRECTIVE = `
+module.exports.R_EDGE_CODE_BEFORE_DIRECTIVE = `
 const a = 1;/* #!debug */
 const b = 2;
 `;

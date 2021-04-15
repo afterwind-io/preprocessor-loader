@@ -7,7 +7,7 @@ const {
   C_DEBUG_SINGLE,
   R_DEBUG_SINGLE,
   C_IF_ENDIF,
-  R_IF_ENDIF_TURE,
+  R_IF_ENDIF_TRUE,
   R_IF_ENDIF_FALSE,
   C_IF_ELSE_ENDIF,
   R_IF_ELSE_ENDIF_1,
@@ -46,8 +46,8 @@ const {
   R_HTML_SINGLE,
   C_HTML_MULTI,
   R_HTML_MULTI,
-  C_EGDE_CODE_BEFORE_DIRECTIVE,
-  R_EGDE_CODE_BEFORE_DIRECTIVE,
+  C_EDGE_CODE_BEFORE_DIRECTIVE,
+  R_EDGE_CODE_BEFORE_DIRECTIVE,
   C_EDGE_CODE_AFTER_DIRECTIVE,
   R_EDGE_CODE_AFTER_DIRECTIVE,
   C_EDGE_COMMENT_AFTER_DIRECTIVE,
@@ -148,7 +148,7 @@ describe('Preprocessor-Loader Test', () => {
     };
 
     it('Standard - 1', () => {
-      expect(p.call({ query: option }, C_IF_ENDIF)).equals(R_IF_ENDIF_TURE);
+      expect(p.call({ query: option }, C_IF_ENDIF)).equals(R_IF_ENDIF_TRUE);
     });
 
     it('Standard - 2', () => {
@@ -356,7 +356,7 @@ describe('Preprocessor-Loader Test', () => {
     };
 
     it('Directive after the same-line code should be ignored', () => {
-      expect(p.call(option, C_EGDE_CODE_BEFORE_DIRECTIVE)).equals(R_EGDE_CODE_BEFORE_DIRECTIVE);
+      expect(p.call(option, C_EDGE_CODE_BEFORE_DIRECTIVE)).equals(R_EDGE_CODE_BEFORE_DIRECTIVE);
     });
 
     it('Code after the same-line directive should be ignored', () => {
