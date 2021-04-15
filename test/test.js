@@ -104,7 +104,14 @@ describe('Preprocessor-Loader Test', () => {
     const params = {
       foo: 1,
       bar: 2,
+      baz: ["1", ["2"]],
     };
+
+    it('Non-primitive Params', () => {
+      expect(ifComparator(params, 'baz.length === 2')).equals(true);
+      expect(ifComparator(params, 'baz[1].length === 1')).equals(true);
+      expect(ifComparator(params, 'baz[1][0] === "2"')).equals(true);
+    });
 
     it('Single Condition', () => {
       expect(ifComparator(params, 'foo === 1')).equals(true);
