@@ -13,11 +13,11 @@ Bring the awesome "Conditional Compilation" to the Webpack, and more.
 - [Configuration](#configuration)
 - [Usage](#usage)
   - [Basics](#basics)
-  - [JSX comment syntax (^1.04)](#jsx-comment-syntax-104)
-  - [HTML comment syntax (^1.10)](#html-comment-syntax-110)
-  - [Inline directive within comment (^1.10)](#inline-directive-within-comment-110)
-  - [Multiline directive syntax (^1.10)](#multiline-directive-syntax-110)
-  - [Multiline directive syntax with comment (^1.10)](#multiline-directive-syntax-with-comment-110)
+  - [JSX comment syntax (^1.0.4)](#jsx-comment-syntax-104)
+  - [HTML comment syntax (^1.1.0)](#html-comment-syntax-110)
+  - [Inline directive within comment (^1.1.0)](#inline-directive-within-comment-110)
+  - [Multiline directive syntax (^1.1.0)](#multiline-directive-syntax-110)
+  - [Multiline directive syntax with comment (^1.1.0)](#multiline-directive-syntax-with-comment-110)
 - [Options](#options)
   - [`debug` _](#debug-_)
   - [`directives`](#directives)
@@ -29,7 +29,7 @@ Bring the awesome "Conditional Compilation" to the Webpack, and more.
 - [Caveats](#caveats)
   - [Inline directive with code](#inline-directive-with-code)
   - [Linting](#linting)
-- [Lisense](#lisense)
+- [License](#license)
 
 ## Why <!-- omit in toc -->
 
@@ -143,7 +143,7 @@ module.exports = {
 
 ### Basics
 
-`Conditional Compilation` relys on a series of specified directives to decide code emitting strategy. The directive must be wrapped in a comment, followed with "`#!`".
+`Conditional Compilation` relies on a series of specified directives to decide code emitting strategy. The directive must be wrapped in a comment, followed with "`#!`".
 
 Demo in `Javascript`:
 
@@ -172,9 +172,9 @@ const c = 2;
 // Now try to find your own usage!
 ```
 
-More detailed explainations see examples provided in [Options](#options) and [Build-in Directives](#build-in-directives).
+More detailed explanations see examples provided in [Options](#options) and [Build-in Directives](#build-in-directives).
 
-### JSX comment syntax (^1.04)
+### JSX comment syntax (^1.0.4)
 
 ``` jsx
 import React from 'react';
@@ -194,7 +194,7 @@ function Hello() {
 }
 ```
 
-### HTML comment syntax (^1.10)
+### HTML comment syntax (^1.1.0)
 
 ``` html
 <body>
@@ -207,15 +207,15 @@ function Hello() {
 </body>
 ```
 
-### Inline directive within comment (^1.10)
+### Inline directive within comment (^1.1.0)
 
 See below.
 
-### Multiline directive syntax (^1.10)
+### Multiline directive syntax (^1.1.0)
 
 See below.
 
-### Multiline directive syntax with comment (^1.10)
+### Multiline directive syntax with comment (^1.1.0)
 
 The following syntax are equivalent and legal:
 
@@ -278,7 +278,7 @@ Note that the custom directive only affects its **next** line, which means:
 ``` javascript
 // #!secret
 console.log('Removed'); // This line will be omitted
-console.log('Kept'); // This line will not be affected by "#!foo", hence it will be kept anyway
+console.log('Kept'); // This line will not be affected by "#!secret", hence it will be kept anyway
 ```
 
 If an undefined directive is referenced, say "foo", the next line marked by `#!foo` will always be omitted, because the value of `foo` is `undefined`, identical as `false`.
@@ -479,7 +479,7 @@ module.exports = {
 };
 ```
 
-## Lisense
+## License
 
 MIT License
 
