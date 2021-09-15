@@ -15,6 +15,7 @@ export function* printer(verbose: boolean): ExtendedIterableIterator<
 
     while (true) {
         const {
+            eval_result,
             raw,
             c_open,
             c_close,
@@ -41,6 +42,9 @@ export function* printer(verbose: boolean): ExtendedIterableIterator<
         }
 
         result = result.concat(segment);
+        if (eval_result.length > 0){
+            result = result.concat(eval_result.join('\n') + '\n');
+        }
     }
 }
 

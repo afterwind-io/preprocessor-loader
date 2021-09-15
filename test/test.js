@@ -58,6 +58,18 @@ const {
   R_EDGE_NO_EOF_MULTI_CHARS,
   C_EDGE_NO_EOF_COMMENT,
   R_EDGE_NO_EOF_COMMENT,
+  C_EVAL,
+  R_EVAL,
+  C_EVAL_WITH_RETURN,
+  R_EVAL_WITH_RETURN,
+  C_EVAL_RETURN_A_STRING,
+  R_EVAL_RETURN_A_STRING,
+  C_EVAL_RETURN_EMPTY,
+  R_EVAL_RETURN_EMPTY,
+  C_EVAL_RETURN_UNDEFINED,
+  R_EVAL_RETURN_UNDEFINED,
+  C_EVAL_MULTI,
+  R_EVAL_MULTI,
 } = require('./case');
 const {
   C_JS,
@@ -380,5 +392,39 @@ describe('Preprocessor-Loader Test', () => {
         expect(p.call(option, C_EDGE_NO_EOF_COMMENT)).equals(R_EDGE_NO_EOF_COMMENT);
       });
     });
+  });
+
+  describe('Eval Test', () => {
+    const option = {
+      params: {
+        arr: ['foo', 'bar'],
+      },
+    };
+
+    it('Eval', () => {
+      expect(p.call({query:option}, C_EVAL)).equals(R_EVAL);
+    });
+
+    it('Eval return a string', () => {
+      expect(p.call({query:option}, C_EVAL_RETURN_A_STRING)).equals(R_EVAL_RETURN_A_STRING);
+    });
+
+    it('Eval return a empty', () => {
+      expect(p.call({query:option}, C_EVAL_RETURN_EMPTY)).equals(R_EVAL_RETURN_EMPTY);
+    });
+
+    it('Eval return a undefined', () => {
+      expect(p.call({query:option}, C_EVAL_RETURN_UNDEFINED)).equals(R_EVAL_RETURN_UNDEFINED);
+    });
+
+    it('Eval with "return "', () => {
+      expect(p.call({query:option}, C_EVAL_WITH_RETURN)).equals(R_EVAL_WITH_RETURN);
+    });
+
+    it('Eval multi line', () => {
+      expect(p.call({query:option}, C_EVAL_MULTI)).equals(R_EVAL_MULTI);
+    });
+
+    
   });
 });

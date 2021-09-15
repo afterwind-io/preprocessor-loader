@@ -390,3 +390,52 @@ module.exports.C_EDGE_NO_EOF_COMMENT = `
 module.exports.R_EDGE_NO_EOF_COMMENT = `
 /* oops
 // wow`;
+
+module.exports.C_EVAL = `
+// #!eval arr.map(it=>'const ' + it + ' = "' + it + '";')
+`;
+module.exports.R_EVAL = `
+const foo = "foo";
+const bar = "bar";
+`;
+
+module.exports.C_EVAL_WITH_RETURN = `
+// #!eval return arr.map(it=>'const ' + it + ' = "' + it + '";')
+`;
+module.exports.R_EVAL_WITH_RETURN = `
+const foo = "foo";
+const bar = "bar";
+`;
+
+module.exports.C_EVAL_RETURN_A_STRING = `
+// #!eval arr.join(',')
+`;
+module.exports.R_EVAL_RETURN_A_STRING = `
+foo,bar
+`;
+
+module.exports.C_EVAL_RETURN_EMPTY = `
+// #!eval arr.filter(it=>it=='---')
+`;
+module.exports.R_EVAL_RETURN_EMPTY = `
+`;
+
+module.exports.C_EVAL_RETURN_UNDEFINED = `
+// #!eval arr.filter(it=>it=='---')[0]
+`;
+module.exports.R_EVAL_RETURN_UNDEFINED = `
+`;
+
+module.exports.C_EVAL_MULTI = `
+/*
+#!eval
+  return arr
+    .map(it=>{
+      return \`const \${it} = "\${it}";\`;
+    })
+*/
+`;
+module.exports.R_EVAL_MULTI = `
+const foo = "foo";
+const bar = "bar";
+`;

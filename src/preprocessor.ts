@@ -27,6 +27,7 @@ export function preprocessor(this: IWebpackLoaderContext, content: string): stri
     p.next();
 
     const o: IPrinterOption = {
+        eval_result: [],
         block: '',
         raw: '',
         c_open: '',
