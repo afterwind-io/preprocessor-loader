@@ -1,57 +1,25 @@
-name: Next release
-
+name: Release
 on:
   push:
-    branches: [ release ]
-  pull_request:
-    branches: [ release ]
-
+    branches:
+      - master
 jobs:
-  publish-to-npm:
-    runs-on: ubuntu-latest
+  release:
+    name: Release
+    runs-on: ubuntu-18.04
     steps:
-      - name: Checkout release branch code
+      - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 1
-
-      - name: Get yarn cache
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache dependencies
-        uses: actions/cache@v1.2.0
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Use Node.js
-        uses: actions/setup-node@v1.4.2
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
         with:
           node-version: 12
-          registry-url: https://registry.npmjs.org
-
-      - name: Publish to NPM
-        run: npm publish || true
+      - name: Install dependencies
+        run: npm ci
+      - name: Release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-#  publish-to-gpr:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout release branch code
-#        uses: actions/checkout@v2
-#
-#      - name: Use Node.js
-#        uses: actions/setup-node@v1.4.2
-#        with:
-#          node-version: 12
-#          registry-url: https://npm.pkg.github.com/
-#
-#      - name: Publish to GitHub Package
-#        run: npm publish
-#        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release

@@ -1,5 +1,5 @@
 {
-  "name": "webpack-preprocessor-loader",
+  "name": "@qinzisong/webpack-preprocessor-loader",
   "version": "1.1.4",
   "description": "A code preprocessor for Webpack",
   "main": "index.js",
@@ -29,10 +29,13 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/git": "^10.0.1",
     "@types/node": "^14.0.24",
     "chai": "^4.2.0",
     "eslint": "^7.5.0",
     "mocha": "^8.0.1",
+    "semantic-release": "^18.0.0",
     "tslint": "^6.1.2",
     "typescript": "^3.9.7",
     "webpack": "^4.43.0"
