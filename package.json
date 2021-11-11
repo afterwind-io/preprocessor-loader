@@ -1,6 +1,6 @@
 {
   "name": "@qinzisong/webpack-preprocessor-loader",
-  "version": "1.1.5",
+  "version": "1.1.4",
   "description": "A code preprocessor for Webpack",
   "main": "index.js",
   "repository": "https://github.com/qzsiniong/preprocessor-loader.git",
@@ -23,7 +23,8 @@
     "mock": "node ./mock/build.js",
     "build": "tsc",
     "test": "mocha",
-    "prepare": "yarn build"
+    "prepare": "yarn build",
+    "semantic-release": "semantic-release pre && npm publish --access=public && semantic-release post"
   },
   "dependencies": {},
   "devDependencies": {
