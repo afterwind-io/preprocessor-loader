@@ -24,7 +24,10 @@
     "build": "tsc",
     "test": "mocha",
     "prepare": "yarn build",
-    "semantic-release": "semantic-release pre && npm publish --access=public && semantic-release post"
+    "semantic-release": "semantic-release"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "dependencies": {},
   "devDependencies": {
