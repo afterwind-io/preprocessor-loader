@@ -3,13 +3,11 @@
   "version": "1.1.5",
   "description": "A code preprocessor for Webpack",
   "main": "index.js",
-  "repository": "https://github.com/afterwind-io/preprocessor-loader.git",
-  "author": "AfterWind <spmushroom@hotmail.com>",
+  "repository": "https://github.com/qzsiniong/preprocessor-loader.git",
   "license": "MIT",
   "engines": {
     "node": ">=6.11.5"
   },
-  "homepage": "https://github.com/afterwind-io/preprocessor-loader",
   "keywords": [
     "webpack",
     "loader",
