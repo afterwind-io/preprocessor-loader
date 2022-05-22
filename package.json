@@ -34,7 +34,7 @@
     "eslint": "^7.5.0",
     "mocha": "^8.0.1",
     "tslint": "^6.1.2",
-    "typescript": "^3.9.7",
+    "typescript": "^4.6.4",
     "webpack": "^4.43.0"
   }
 }
