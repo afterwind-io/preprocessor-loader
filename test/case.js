@@ -390,3 +390,58 @@ module.exports.C_EDGE_NO_EOF_COMMENT = `
 module.exports.R_EDGE_NO_EOF_COMMENT = `
 /* oops
 // wow`;
+
+module.exports.C_EDGE_SAME_ELSEIF = `
+/* foo === 2 */
+// #!if foo === 1
+foo = 1
+// #!elseif foo === 2
+foo_1 = 2
+// #!elseif foo === 2
+foo_2 = 2
+// #!endif
+`;
+
+module.exports.R_EDGE_SAME_ELSEIF = `
+/* foo === 2 */
+foo_1 = 2
+`;
+
+module.exports.C_EDGE_ELSEIF_AFTER_ELSE = `
+// #!if foo === 1
+foo = 1
+// #!else
+foo = 2
+// #!elseif foo === 3
+foo = 3
+// #!endif
+`;
+
+module.exports.R_EDGE_ELSEIF_AFTER_ELSE_1 = `
+foo = 1
+`;
+
+module.exports.R_EDGE_ELSEIF_AFTER_ELSE_2 = `
+foo = 2
+`;
+
+module.exports.C_EDGE_DRCT_IN_IF = `
+// #!if foo === 1
+// #!secret
+secret1
+// #!else
+// #!secret
+secret2
+// #!endif
+`;
+
+module.exports.R_EDGE_DRCT_IN_IF_1_T = `
+secret1
+`;
+module.exports.R_EDGE_DRCT_IN_IF_2_T = `
+secret2
+`;
+module.exports.R_EDGE_DRCT_IN_IF_1_F = `
+`;
+module.exports.R_EDGE_DRCT_IN_IF_2_F = `
+`;

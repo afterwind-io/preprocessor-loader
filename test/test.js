@@ -1,5 +1,6 @@
 const expect = require('chai').expect;
-const { ifComparator, getDirective } = require('../dist/filter');
+const { ifComparator } = require('../dist/filter');
+const { getDirective } = require('../dist/parser');
 const { preprocessor: p } = require('../dist/preprocessor');
 const {
   C_DEBUG,
@@ -220,6 +221,63 @@ describe('Preprocessor-Loader Test', () => {
     });
   });
 
+  describe('Directive Test - Nested #!if', () => {
+    it('#!if nested in #!if', () => {
+      const {
+        C_NESTED_IF_IF,
+        R_NESTED_IF_IF_1_1,
+        R_NESTED_IF_IF_1_2,
+        R_NESTED_IF_IF_2_1,
+        R_NESTED_IF_IF_2_2,
+      } = require('./case_nested_if');
+
+      expect(p.call(buildParams(1, 1), C_NESTED_IF_IF)).equals(R_NESTED_IF_IF_1_1);
+      expect(p.call(buildParams(1, 2), C_NESTED_IF_IF)).equals(R_NESTED_IF_IF_1_2);
+      expect(p.call(buildParams(2, 1), C_NESTED_IF_IF)).equals(R_NESTED_IF_IF_2_1);
+      expect(p.call(buildParams(2, 2), C_NESTED_IF_IF)).equals(R_NESTED_IF_IF_2_2);
+    });
+
+    it('#!if/#!else nested in #!if/#!else', () => {
+      const {
+        C_NESTED_IF_ELSE,
+        R_NESTED_IF_ELSE_1_1,
+        R_NESTED_IF_ELSE_1_2,
+        R_NESTED_IF_ELSE_2_1,
+        R_NESTED_IF_ELSE_2_2,
+      } = require('./case_nested_if');
+
+      expect(p.call(buildParams(1, 1), C_NESTED_IF_ELSE)).equals(R_NESTED_IF_ELSE_1_1);
+      expect(p.call(buildParams(1, 2), C_NESTED_IF_ELSE)).equals(R_NESTED_IF_ELSE_1_2);
+      expect(p.call(buildParams(2, 1), C_NESTED_IF_ELSE)).equals(R_NESTED_IF_ELSE_2_1);
+      expect(p.call(buildParams(2, 2), C_NESTED_IF_ELSE)).equals(R_NESTED_IF_ELSE_2_2);
+    });
+
+    it('#!if/#!elseif/#!else nested in #!if/#!elseif/#!else', () => {
+      const {
+        C_NESTED_IF_ELSEIF_ELSE,
+        R_NESTED_IF_ELSEIF_ELSE_1_1,
+        R_NESTED_IF_ELSEIF_ELSE_1_2,
+        R_NESTED_IF_ELSEIF_ELSE_1_3,
+        R_NESTED_IF_ELSEIF_ELSE_2_1,
+        R_NESTED_IF_ELSEIF_ELSE_2_2,
+        R_NESTED_IF_ELSEIF_ELSE_2_3,
+        R_NESTED_IF_ELSEIF_ELSE_3_1,
+        R_NESTED_IF_ELSEIF_ELSE_3_2,
+        R_NESTED_IF_ELSEIF_ELSE_3_3,
+      } = require('./case_nested_if');
+
+      expect(p.call(buildParams(1, 1), C_NESTED_IF_ELSEIF_ELSE)).equals(R_NESTED_IF_ELSEIF_ELSE_1_1);
+      expect(p.call(buildParams(1, 2), C_NESTED_IF_ELSEIF_ELSE)).equals(R_NESTED_IF_ELSEIF_ELSE_1_2);
+      expect(p.call(buildParams(1, 3), C_NESTED_IF_ELSEIF_ELSE)).equals(R_NESTED_IF_ELSEIF_ELSE_1_3);
+      expect(p.call(buildParams(2, 1), C_NESTED_IF_ELSEIF_ELSE)).equals(R_NESTED_IF_ELSEIF_ELSE_2_1);
+      expect(p.call(buildParams(2, 2), C_NESTED_IF_ELSEIF_ELSE)).equals(R_NESTED_IF_ELSEIF_ELSE_2_2);
+      expect(p.call(buildParams(2, 3), C_NESTED_IF_ELSEIF_ELSE)).equals(R_NESTED_IF_ELSEIF_ELSE_2_3);
+      expect(p.call(buildParams(3, 1), C_NESTED_IF_ELSEIF_ELSE)).equals(R_NESTED_IF_ELSEIF_ELSE_3_1);
+      expect(p.call(buildParams(3, 2), C_NESTED_IF_ELSEIF_ELSE)).equals(R_NESTED_IF_ELSEIF_ELSE_3_2);
+      expect(p.call(buildParams(3, 3), C_NESTED_IF_ELSEIF_ELSE)).equals(R_NESTED_IF_ELSEIF_ELSE_3_3);
+    });
+  });
+
   describe('Directive Test - Custom Directives', () => {
     const option = {
       directives: {
@@ -380,5 +438,66 @@ describe('Preprocessor-Loader Test', () => {
         expect(p.call(option, C_EDGE_NO_EOF_COMMENT)).equals(R_EDGE_NO_EOF_COMMENT);
       });
     });
+
+    describe('Rare cases in #!if', () => {
+      it(`Multiple "#!elseif" with same condition, and the latter block should be omitted`, () => {
+        const { C_EDGE_SAME_ELSEIF, R_EDGE_SAME_ELSEIF } = require('./case');
+        expect(p.call(buildParams(2), C_EDGE_SAME_ELSEIF)).equals(R_EDGE_SAME_ELSEIF);
+      });
+
+      it(`"#!elseif" may appear after "#!else", but should be always omitted`, () => {
+        const {
+          C_EDGE_ELSEIF_AFTER_ELSE,
+          R_EDGE_ELSEIF_AFTER_ELSE_1,
+          R_EDGE_ELSEIF_AFTER_ELSE_2,
+        } = require('./case');
+        expect(p.call(buildParams(1), C_EDGE_ELSEIF_AFTER_ELSE)).equals(R_EDGE_ELSEIF_AFTER_ELSE_1);
+        expect(p.call(buildParams(2), C_EDGE_ELSEIF_AFTER_ELSE)).equals(R_EDGE_ELSEIF_AFTER_ELSE_2);
+      });
+
+      it(`Custom Directives nested in the "#!if" block should be processed depends on the containing block`, () => {
+        const {
+          C_EDGE_DRCT_IN_IF,
+          R_EDGE_DRCT_IN_IF_1_T,
+          R_EDGE_DRCT_IN_IF_2_T,
+          R_EDGE_DRCT_IN_IF_1_F,
+          R_EDGE_DRCT_IN_IF_2_F,
+        } = require('./case');
+
+        const option = {
+          directives: {
+            secret: true,
+          },
+          params: {
+            foo: 1,
+          },
+        };
+        expect(p.call({ query: option }, C_EDGE_DRCT_IN_IF)).equals(R_EDGE_DRCT_IN_IF_1_T);
+        option.params.foo = 2;
+        expect(p.call({ query: option }, C_EDGE_DRCT_IN_IF)).equals(R_EDGE_DRCT_IN_IF_2_T);
+        option.directives.secret = false;
+        expect(p.call({ query: option }, C_EDGE_DRCT_IN_IF)).equals(R_EDGE_DRCT_IN_IF_2_F);
+        option.params.foo = 1;
+        expect(p.call({ query: option }, C_EDGE_DRCT_IN_IF)).equals(R_EDGE_DRCT_IN_IF_1_F);
+      });
+    });
   });
 });
+
+/**
+  * Util function for testing params
+  *
+  * @param {number} foo
+  * @param {number} bar
+  * @returns fake webpack context
+  */
+function buildParams(foo, bar = 0) {
+  return {
+    query: {
+      params: {
+        foo,
+        bar,
+      },
+    },
+  };
+}

@@ -1,33 +1,34 @@
 export type Nullable<T> = T | null;
 
+/**
+ * A collection of user-defined params.
+ */
 export interface IParamsMap {
-    [key: string]: any;
+  [key: string]: any;
 }
 
+/**
+ * A collection of user-defined directives.
+ */
 export interface IDirectivesMap {
-    [key: string]: boolean;
+  [key: string]: boolean;
 }
 
 export interface IPreprocessorOption {
-    /**
-     * debug mode
-     */
-    debug: boolean;
-    /**
-     * Custom Directives
-     */
-    directives: IDirectivesMap;
-    /**
-     * values for buildin directives
-     */
-    params: IParamsMap;
-    /**
-     * whether keep all lines (deleted code as comment)
-     */
-    verbose: boolean;
-}
-
-export interface ExtendedIterableIterator<T, TReturn, TNext>
-    extends Iterator<T, TReturn, TNext> {
-    [Symbol.iterator](): ExtendedIterableIterator<T, TReturn, TNext>;
+  /**
+   * debug mode
+   */
+  debug: boolean;
+  /**
+   * Custom Directives
+   */
+  directives: IDirectivesMap;
+  /**
+   * Values for built-in directives
+   */
+  params: IParamsMap;
+  /**
+   * Should keep all lines (omitted code as comment)
+   */
+  verbose: boolean;
 }

@@ -51,7 +51,7 @@ function getPlainTextResult(raw: string): IReaderResult {
     };
 }
 
-export function* reader(content: string): IterableIterator<IReaderResult> {
+export function* reader(content: string): Generator<IReaderResult> {
     const len = content.length;
 
     if (len === 0) {
