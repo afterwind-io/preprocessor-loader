@@ -42,9 +42,7 @@ export function print(
         const { c_open, c_close } = block;
         lastCommentOpen = c_open || lastCommentOpen;
         lastCommentClose = c_close || lastCommentClose;
-      }
 
-      if (isComment) {
         segment = raw;
       } else {
         segment = verbosePrint(lastCommentOpen, lastCommentClose, raw);
