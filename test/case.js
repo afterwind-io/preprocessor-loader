@@ -165,6 +165,10 @@ module.exports.C_VERBOSE_MIXED = `
 const a = 1;
 /* #!debug */
 const b = 2;
+<!-- #!if foo === 1 -->
+/* NOT ME */
+const c = 3;
+<!-- #!endif -->
 `;
 
 module.exports.R_VERBOSE_MIXED = `
@@ -172,6 +176,10 @@ module.exports.R_VERBOSE_MIXED = `
 // const a = 1;
 /* #!debug */
 /* const b = 2;*/
+<!-- #!if foo === 1 -->
+/* NOT ME */
+<!-- const c = 3;-->
+<!-- #!endif -->
 `;
 
 module.exports.C_CASE_INLINE_COMMENT_SINGLE = `

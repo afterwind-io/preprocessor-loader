@@ -33,16 +33,18 @@ export function print(
     );
     filter = nextFilter;
 
-    const { c_open, c_close } = block;
-    lastCommentOpen = c_open || lastCommentOpen;
-    lastCommentClose = c_close || lastCommentClose;
-
     const { raw, isComment, isDirective } = blockInfo;
     let segment = "";
     if (preserve) {
       segment = raw;
     } else if (verbose) {
-      if (isComment || isDirective) {
+      if (isDirective) {
+        const { c_open, c_close } = block;
+        lastCommentOpen = c_open || lastCommentOpen;
+        lastCommentClose = c_close || lastCommentClose;
+      }
+
+      if (isComment) {
         segment = raw;
       } else {
         segment = verbosePrint(lastCommentOpen, lastCommentClose, raw);
