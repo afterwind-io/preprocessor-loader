@@ -44,6 +44,12 @@ export function print(
         lastCommentClose = c_close || lastCommentClose;
 
         segment = raw;
+      } else if (isComment) {
+        // comment may contain multiple lines
+        const lines = raw.split("\n").filter((l) => l !== "");
+        segment = lines
+          .map((l) => verbosePrint(lastCommentOpen, lastCommentClose, l))
+          .join("");
       } else {
         segment = verbosePrint(lastCommentOpen, lastCommentClose, raw);
       }

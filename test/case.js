@@ -166,7 +166,10 @@ const a = 1;
 /* #!debug */
 const b = 2;
 <!-- #!if foo === 1 -->
-/* NOT ME */
+/* 
+  NOT ME
+*/
+/* NOT ME EITHER */
 const c = 3;
 <!-- #!endif -->
 `;
@@ -177,7 +180,10 @@ module.exports.R_VERBOSE_MIXED = `
 /* #!debug */
 /* const b = 2;*/
 <!-- #!if foo === 1 -->
-/* NOT ME */
+<!-- /*-->
+<!-- NOT ME-->
+<!-- */-->
+<!-- /* NOT ME EITHER */-->
 <!-- const c = 3;-->
 <!-- #!endif -->
 `;

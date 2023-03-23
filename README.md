@@ -375,6 +375,7 @@ Given:
 // options.params.ENV === 'product'
 
 // #!if ENV === 'develop'
+/** some comment */ 
 console.log("many doge");
 // #!else
 console.log("much wow");
@@ -385,6 +386,7 @@ If set to `true`, yields:
 
 ```javascript
 // #!if ENV === 'develop'
+// /** some comment */
 // console.log('many doge');
 // #!else
 console.log("much wow");
