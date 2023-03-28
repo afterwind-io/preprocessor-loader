@@ -27,6 +27,7 @@ Bring the awesome "Conditional Compilation" to the Webpack, and more.
   - [`#!debug`](#debug-1)
 - [Caveats](#caveats)
   - [Javascript](#javascript)
+- [Changelog](#changelog)
 - [License](#license)
 
 ## Why <!-- omit in toc -->
@@ -363,11 +364,11 @@ Provide constant values for built-in `#!if` / `#!elseif` / `#!else` / `#!endif` 
 
 ### `verbose`
 
-> type: `boolean`
+> type: `boolean` | `{ escapeComments?: boolean; }`
 >
 > default: `false`
 
-Preserve all directive comments and omitted lines as comments. Basically for debugging purpose.
+Preserve all directive comments and omitted lines as comments. Basically for debugging purpose. Note that the normal comments remain as-is(except padding).
 
 Given:
 
@@ -375,7 +376,7 @@ Given:
 // options.params.ENV === 'product'
 
 // #!if ENV === 'develop'
-/** some comment */ 
+/** some comment */
 console.log("many doge");
 // #!else
 console.log("much wow");
@@ -384,13 +385,63 @@ console.log("much wow");
 
 If set to `true`, yields:
 
+<!-- prettier-ignore -->
 ```javascript
 // #!if ENV === 'develop'
-// /** some comment */
+   /** some comment */
 // console.log('many doge');
 // #!else
 console.log("much wow");
 // #!endif
+```
+
+#### `escapeComments`
+
+> default: `false`
+
+There are rare cases where multiple kinds of comment notations live within the same control block. For example:
+
+```html
+<body>
+  <!-- #!if foo === 1-->
+  <style>
+    .div {
+      /* comment because of reasons */
+      color: tomato;
+    }
+  </style>
+  <script>
+    /**
+     * another multiline comment
+     
+     */
+    const bar = 1;
+  </script>
+  <!-- #!endif -->
+</body>
+```
+
+If `foo === 2`, the comments in `style` and `script` tag will stay as-is and "leak" into outside code. To prevent unwanted results, set `escapeComments` to `true`. All _non-directive_ comment notations will be replaced by `@@`, and re-wrapped by those used in the previous directive:
+
+<!-- prettier-ignore -->
+```html
+<body>
+<!-- #!if foo === 1-->
+<!--   <style>-->
+<!--     .div {-->
+<!--       @@ comment because of reasons @@-->
+<!--       color: tomato;-->
+<!--     }-->
+<!--   </style>-->
+<!--   <script>-->
+<!--     @@*-->
+<!--      * another multiline comment-->
+<!-- -->
+<!--      @@-->
+<!--     const bar = 1;-->
+<!--   </script>-->
+<!-- #!endif -->
+</body>
 ```
 
 ## Built-in Directives
@@ -545,6 +596,10 @@ module.exports = {
   },
 };
 ```
+
+## Changelog
+
+See [Github Release Page](https://github.com/afterwind-io/preprocessor-loader/releases).
 
 ## License
 

@@ -14,6 +14,16 @@ export interface IDirectivesMap {
   [key: string]: boolean;
 }
 
+/**
+ * Configs for verbose mode.
+ */
+export interface IVerboseOption {
+  /**
+   * Decides whether escape comment notation in normal comments
+   */
+  escapeComments?: boolean;
+}
+
 export interface IPreprocessorOption {
   /**
    * debug mode
@@ -30,5 +40,5 @@ export interface IPreprocessorOption {
   /**
    * Should keep all lines (omitted code as comment)
    */
-  verbose: boolean;
+  verbose: boolean | IVerboseOption;
 }

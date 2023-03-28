@@ -148,44 +148,64 @@ module.exports.R_VERBOSE_SINGLE = `
 
 module.exports.C_VERBOSE_MULTI = `
 // #!if foo === 1
+/* comment1 */
 const a = 1;
+/**
+ * comment2
+ */
 const b = 2;
 // #!endif
 `;
 
 module.exports.R_VERBOSE_MULTI = `
 // #!if foo === 1
+   /* comment1 */
 // const a = 1;
+   /**
+    * comment2
+    */
 // const b = 2;
 // #!endif
 `;
 
 module.exports.C_VERBOSE_MIXED = `
-// #!debug
-const a = 1;
-/* #!debug */
-const b = 2;
-<!-- #!if foo === 1 -->
-/* 
-  NOT ME
-*/
-/* NOT ME EITHER */
-const c = 3;
-<!-- #!endif -->
+<body>
+  <!-- #!if foo === 1-->
+  <style>
+    .div {
+      /* comment because of reasons */
+      color: tomato;
+    }
+  </style>
+  <script>
+    /**
+     * another multiline comment
+     
+     */
+    const bar = 1;
+  </script>
+  <!-- #!endif -->
+</body>
 `;
 
 module.exports.R_VERBOSE_MIXED = `
-// #!debug
-// const a = 1;
-/* #!debug */
-/* const b = 2;*/
-<!-- #!if foo === 1 -->
-<!-- /*-->
-<!-- NOT ME-->
-<!-- */-->
-<!-- /* NOT ME EITHER */-->
-<!-- const c = 3;-->
-<!-- #!endif -->
+<body>
+  <!-- #!if foo === 1-->
+<!--   <style>-->
+<!--     .div {-->
+<!--       @@ comment because of reasons @@-->
+<!--       color: tomato;-->
+<!--     }-->
+<!--   </style>-->
+<!--   <script>-->
+<!--     @@*-->
+<!--      * another multiline comment-->
+<!-- -->
+<!--      @@-->
+<!--     const bar = 1;-->
+<!--   </script>-->
+  <!-- #!endif -->
+</body>
 `;
 
 module.exports.C_CASE_INLINE_COMMENT_SINGLE = `

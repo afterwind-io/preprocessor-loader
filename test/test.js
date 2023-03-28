@@ -300,24 +300,35 @@ describe('Preprocessor-Loader Test', () => {
   });
 
   describe('Option Test - Verbose', () => {
-    const option = {
-      params: {
-        foo: 2,
-      },
-      debug: false,
-      verbose: true,
-    };
+    describe('enable without options', () => {
+      const option = {
+        params: {
+          foo: 2,
+        },
+        debug: false,
+        verbose: true,
+      };
 
-    it('Single Line', () => {
-      expect(p.call({ query: option }, C_VERBOSE_SINGLE)).equals(R_VERBOSE_SINGLE);
+      it('Single Line', () => {
+        expect(p.call({ query: option }, C_VERBOSE_SINGLE)).equals(R_VERBOSE_SINGLE);
+      });
+
+      it('Multiple Lines', () => {
+        expect(p.call({ query: option }, C_VERBOSE_MULTI)).equals(R_VERBOSE_MULTI);
+      });
     });
 
-    it('Multiple Lines', () => {
-      expect(p.call({ query: option }, C_VERBOSE_MULTI)).equals(R_VERBOSE_MULTI);
-    });
+    describe('escapeComments', () => {
+      const option = {
+        params: {
+          foo: 2,
+        },
+        verbose: { escapeComments: true },
+      };
 
-    it('Verbose lines should be commented with previous symbols', () => {
-      expect(p.call({ query: option }, C_VERBOSE_MIXED)).equals(R_VERBOSE_MIXED);
+      it('The notation of normal comments should be transformed like pervious directive', () => {
+        expect(p.call({ query: option }, C_VERBOSE_MIXED)).equals(R_VERBOSE_MIXED);
+      });
     });
   });
 
